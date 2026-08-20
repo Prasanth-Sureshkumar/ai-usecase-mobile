@@ -6,7 +6,7 @@ export const mockMenus = [
   {
     id: "regent-ai",
     name: "Regent AI",
-    icon: IconMap.regentSprinkle,
+    icon: IconMap.regentSprinke,
     url: "https://www.youtube.com/"
   },
   {

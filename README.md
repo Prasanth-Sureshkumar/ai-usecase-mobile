@@ -19,7 +19,7 @@ cd /Users/prasanth/Development/regent-ai-mobile
 
 ```sh
 npm install
-npm install @react-navigation/native @react-navigation/native-stack react-native-screens react-native-safe-area-context react-native-webview lucide-react-native react-native-svg
+npm install @react-navigation/native @react-navigation/native-stack react-native-screens react-native-safe-area-context react-native-webview
 ```
 
 For iOS:

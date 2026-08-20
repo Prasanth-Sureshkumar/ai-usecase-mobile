@@ -87,7 +87,7 @@ export default function LoginScreen({ navigation, route }) {
       <AppButton label="Login" onPress={submit} loading={state === REQUEST_STATES.LOADING} style={styles.button} />
       <Text style={styles.footerText}>
         New User Login?{" "}
-        <Text style={styles.link} onPress={() => navigation.navigate("PreLogin", { email, showHeader: true })}>
+        <Text style={styles.link} onPress={() => navigation.navigate("PreLogin", { email })}>
           Click here
         </Text>
       </Text>

@@ -5,7 +5,6 @@ import {
   Text,
   View
 } from "react-native";
-import { Check } from "lucide-react-native";
 import AppButton from "../components/AppButton";
 import AppInput from "../components/AppInput";
 import ErrorMessage from "../components/ErrorMessage";
@@ -16,6 +15,7 @@ import { fontStyles, weights } from "../constants/typography";
 import { REQUEST_STATES } from "../types/auth";
 import { register, sendOtp } from "../services/authService";
 import { validateEmail, validateOtp, validatePassword, validateRequired } from "../utils/validation";
+import Icon, { IconMap } from "../components/Icons";
 
 export default function RegisterScreen({ navigation, route }) {
   const [form, setForm] = useState({
@@ -95,7 +95,11 @@ export default function RegisterScreen({ navigation, route }) {
         <AppInput label="Set Password*" value={form.password} onChangeText={(value) => updateField("password", value)} placeholder="Enter password" secureTextEntry error={errors.password} />
         <Pressable onPress={() => setAccepted((value) => !value)} style={styles.termsRow}>
           <View style={[styles.checkbox, accepted && styles.checkboxActive]}>
-            {accepted ? <Check size={16} color={colors.white} strokeWidth={3} /> : null}
+            {accepted ? <Icon
+              size={15}
+              name={IconMap.check}
+              color={colors.white}
+            /> : null}
           </View>
           <Text style={styles.termsText}>
             I agree to the <Text style={styles.termsLink}>Terms & Conditions</Text>

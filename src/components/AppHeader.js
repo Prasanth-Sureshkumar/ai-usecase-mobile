@@ -1,8 +1,8 @@
 import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
-import { ChevronDown, ChevronLeft } from "lucide-react-native";
 import { colors } from "../constants/colors";
 import { fontStyles, weights } from "../constants/typography";
+import Icon, { IconMap } from "./Icons";
 
 export const MAIN_HEADER_LOGO_URL =
   "https://pub-d423d28126b8427881b12df516c6520a.r2.dev/Frame%2026796%20(1).png";
@@ -16,7 +16,7 @@ export function BackHeader({
   return (
     <View style={[styles.backHeader, arrowOnly && styles.arrowOnlyHeader, style]}>
       <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>
-        <ChevronLeft size={30} color={colors.text} strokeWidth={1.5} />
+        <Icon name={IconMap.backArrowLeft} color={colors.neutrals900} size={25}/>
       </Pressable>
       {arrowOnly ? null : <Text style={styles.backTitle}>{title}</Text>}
     </View>
@@ -28,7 +28,7 @@ export function MainHeader({ logoUrl = MAIN_HEADER_LOGO_URL }) {
     <View style={styles.mainHeader}>
       <View style={styles.brandRow}>
         <Image source={{ uri: logoUrl }} resizeMode="contain" style={styles.logoImage} />
-        <ChevronDown size={28} color={colors.text} strokeWidth={2.2} />
+        <Icon name={IconMap.dropDown} color={colors.neutrals900} size={25} />
       </View>
       <View style={styles.profileWrap}>
         <Image source={{ uri: "https://i.pravatar.cc/80?img=12" }} style={styles.avatar} />

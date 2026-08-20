@@ -1,11 +1,11 @@
 import React from "react";
 import { ActivityIndicator, Pressable, StyleSheet, Text } from "react-native";
-import { ArrowRight } from "lucide-react-native";
 import { colors } from "../constants/colors";
 import { screen } from "../constants/spacing";
 import { weights } from "../constants/typography";
+import Icon, { IconMap } from "./Icons";
 
-export default function AppButton({ label, onPress, disabled, loading, icon = false, style }) {
+export default function AppButton({ label, onPress, disabled, loading, icon = false, style }) {  
   return (
     <Pressable
       disabled={disabled || loading}
@@ -18,7 +18,7 @@ export default function AppButton({ label, onPress, disabled, loading, icon = fa
       ]}
     >
       {loading ? <ActivityIndicator color={colors.white} /> : <Text style={styles.text}>{label}</Text>}
-      {!loading && icon ? <ArrowRight size={22} color={colors.white} strokeWidth={1.8} /> : null}
+      {!loading && icon ? <Icon name={IconMap.rightArrow} color={colors.white} size={20} />: null}
     </Pressable>
   );
 }
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
-    gap: 12
+    gap: 10
   },
   pressed: {
     opacity: 0.86

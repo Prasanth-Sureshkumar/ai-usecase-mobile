@@ -1,8 +1,8 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Check } from "lucide-react-native";
 import { colors } from "../constants/colors";
 import { fontStyles } from "../constants/typography";
+import Icon, { IconMap } from "./Icons";
 
 export default function SuccessState({ title, message }) {
   const fieldSize = 260;
@@ -70,10 +70,10 @@ export default function SuccessState({ title, message }) {
         })}
 
         <View style={styles.checkCircle}>
-          <Check
-            size={74}
-            color={colors.white}
-            strokeWidth={3}
+          <Icon
+          size={74}
+          name={IconMap.check}
+          color={colors.white}
           />
         </View>
       </View>

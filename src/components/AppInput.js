@@ -1,10 +1,10 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import { Edit2 } from "lucide-react-native";
 import { colors } from "../constants/colors";
 import { screen } from "../constants/spacing";
 import { fontStyles } from "../constants/typography";
 import { useKeyboardAwareScroll } from "./KeyboardAwareScrollScreen";
+import Icon, { IconMap } from "./Icons";
 
 export default function AppInput({
   label,
@@ -46,7 +46,7 @@ export default function AppInput({
         />
         {rightIcon === "edit" ? (
           <Pressable onPress={onRightPress} hitSlop={10}>
-            <Edit2 size={18} color={colors.text} fill={colors.text} />
+            <Icon name={IconMap.pencil} color={colors.neutrals900} size={18} />
           </Pressable>
         ) : null}
       </View>

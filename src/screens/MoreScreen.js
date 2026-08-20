@@ -1,13 +1,13 @@
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { colors } from "../constants/colors";
 import { fontStyles } from "../constants/typography";
 import Icon from "../components/Icons";
 
 const moreItems = [
-  { id: "admin", title: "Admin Panel", icon: "pencil", color: colors.primary },
-  { id: "about", title: "About Regent", icon: "regentSprinkle", color: colors.gold },
-  { id: "terms", title: "Terms & Condition", icon: "document", color: colors.iconGray }
+  { id: "admin", title: "Admin Panel", imageUrl: "https://pub-d423d28126b8427881b12df516c6520a.r2.dev/adminpanel.png" },
+  { id: "about", title: "About Regent", imageUrl: "https://pub-d423d28126b8427881b12df516c6520a.r2.dev/about.png" },
+  { id: "terms", title: "Terms & Condition", imageUrl: "https://pub-d423d28126b8427881b12df516c6520a.r2.dev/Terms.png" }
 ];
 
 export default function MoreScreen() {
@@ -25,7 +25,10 @@ export default function MoreScreen() {
               onPress={() => handleMoreItemPress(item)}
               style={({ pressed }) => [styles.card, pressed && styles.pressed]}
             >
-              <Icon name={item.icon} size={58} color={item.color} />
+              {item.icon ?
+                <Icon name={item.icon} size={30} color={item.color} /> :
+                <Image source={{ uri: item.imageUrl }} style={styles.iconStyle} />
+              }
               <Text style={styles.cardText}>{item.title}</Text>
             </Pressable>
           );
@@ -49,7 +52,9 @@ const styles = StyleSheet.create({
   },
   card: {
     width: "48%",
-    height: 144,
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    height: "auto",
     borderRadius: 14,
     backgroundColor: colors.neutrals50,
     alignItems: "center",
@@ -62,5 +67,10 @@ const styles = StyleSheet.create({
     color: colors.neutrals900,
     ...fontStyles.smRegular,
     textAlign: "center",
+  },
+  iconStyle: {
+    width: 50,
+    height: 50,
+    objectFit: 'contain',
   },
 });
