@@ -1,26 +1,19 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { FileText, MoreHorizontal, Sparkles } from "lucide-react-native";
 import { colors } from "../constants/colors";
 import { screen } from "../constants/spacing";
 import { fontStyles } from "../constants/typography";
-
-const iconMap = {
-  sparkles: Sparkles,
-  "file-text": FileText,
-  "more-horizontal": MoreHorizontal
-};
+import Icon from "./Icons";
 
 export default function BottomNavigation({ items, selectedId, onSelect }) {
   return (
     <View style={styles.tabBar}>
       {items.map((item) => {
         const active = selectedId === item.id;
-        const Icon = iconMap[item.icon] || Sparkles;
         return (
           <Pressable key={item.id} onPress={() => onSelect(item)} style={styles.tabItem}>
             <View style={[styles.activeLine, active && styles.activeLineVisible]} />
-            <Icon size={28} color={active ? colors.primary500 : colors.navy} strokeWidth={2} />
+            <Icon name={item.icon} size={28} color={active ? colors.primary500 : colors.neutrals900} />
             <Text style={[styles.label, active && styles.activeLabel]}>{item.name}</Text>
           </Pressable>
         );
@@ -54,11 +47,11 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent"
   },
   activeLineVisible: {
-    backgroundColor: colors.primary500,
+    backgroundColor: colors.primary500
   },
   label: {
     color: colors.neutrals900,
-    ...fontStyles.xsmRegular,
+    ...fontStyles.xsmRegular
   },
   activeLabel: {
     color: colors.primary500

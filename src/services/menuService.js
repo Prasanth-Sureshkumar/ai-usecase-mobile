@@ -1,17 +1,18 @@
+import { IconMap } from "../components/Icons";
+
 const delay = (ms = 500) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const mockMenus = [
   {
     id: "regent-ai",
     name: "Regent AI",
-    icon: "sparkles",
-    url: "https://www.youtube.com/",
-    home: true
+    icon: IconMap.regentSprinkle,
+    url: "https://www.youtube.com/"
   },
   {
     id: "my-docs",
     name: "My Docs",
-    icon: "file-text",
+    icon: IconMap.document,
     url: "https://www.youtube.com/"
   }
 ];
