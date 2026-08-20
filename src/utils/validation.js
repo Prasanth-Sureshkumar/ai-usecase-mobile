@@ -1,0 +1,32 @@
+export function validateEmail(value) {
+  const email = value.trim();
+  if (!email) return "Email address is required.";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Enter a valid email address.";
+  return "";
+}
+
+export function validateRequired(value, label) {
+  if (!String(value || "").trim()) return `${label} is required.`;
+  return "";
+}
+
+export function validatePassword(value) {
+  if (!value) return "Password is required.";
+  if (value.length < 6) return "Password must be at least 6 characters.";
+  return "";
+}
+
+export function validateOtp(value) {
+  if (!value.trim()) return "OTP is required.";
+  if (!/^\d{6}$/.test(value.trim())) return "Enter a 6 digit OTP.";
+  return "";
+}
+
+export function isValidUrl(url) {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch (error) {
+    return false;
+  }
+}

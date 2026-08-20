@@ -1,0 +1,1 @@
+/Users/prasanth/Development/regent-ai-mobile/android/app/build/intermediates/cxx/Debug/5a5q1c6d/obj/armeabi-v7a

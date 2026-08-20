@@ -1,0 +1,98 @@
+# Resolve react_native_pods.rb with node to allow for hoisting
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
+
+platform :ios, min_ios_version_supported
+prepare_react_native_project!
+
+linkage = ENV['USE_FRAMEWORKS']
+if linkage != nil
+  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+  use_frameworks! :linkage => linkage.to_sym
+end
+
+target 'SchoolPortalMobileCli' do
+  config = use_native_modules!
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  post_install do |installer|
+    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      :mac_catalyst_enabled => false,
+      # :ccache_enabled => true
+    )
+
+    # Xcode 26 can reject fmt's consteval format checks while
+    # compiling React Native 0.80 pods that include fmt headers.
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |configuration|
+        definitions = configuration.build_settings['GCC_PREPROCESSOR_DEFINITIONS']
+        definitions = ['$(inherited)'] if definitions.nil?
+        definitions = [definitions] if definitions.is_a?(String)
+        definitions << 'FMT_USE_CONSTEVAL=0'
+        configuration.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = definitions.uniq
+
+        if target.name.downcase.include?('fmt')
+          configuration.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+          configuration.build_settings['OTHER_CPLUSPLUSFLAGS'] = [
+            '$(inherited)',
+            '-DFMT_USE_CONSTEVAL=0'
+          ]
+        end
+      end
+    end
+
+    fmt_xcconfigs = Dir.glob(File.join(installer.sandbox.root.to_s, 'Target Support Files/fmt/fmt.*.xcconfig'))
+    fmt_xcconfigs.each do |xcconfig_path|
+      xcconfig = File.read(xcconfig_path)
+      xcconfig.gsub!(/CLANG_CXX_LANGUAGE_STANDARD = .*/, 'CLANG_CXX_LANGUAGE_STANDARD = c++17')
+
+      if xcconfig.match?(/GCC_PREPROCESSOR_DEFINITIONS = .*/)
+        xcconfig.gsub!(
+          /GCC_PREPROCESSOR_DEFINITIONS = (.*)/,
+          'GCC_PREPROCESSOR_DEFINITIONS = \1 FMT_USE_CONSTEVAL=0'
+        )
+      else
+        xcconfig << "\nGCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1 FMT_USE_CONSTEVAL=0\n"
+      end
+
+      if xcconfig.match?(/OTHER_CPLUSPLUSFLAGS = .*/)
+        xcconfig.gsub!(
+          /OTHER_CPLUSPLUSFLAGS = (.*)/,
+          'OTHER_CPLUSPLUSFLAGS = \1 -DFMT_USE_CONSTEVAL=0'
+        )
+      else
+        xcconfig << "OTHER_CPLUSPLUSFLAGS = $(inherited) -DFMT_USE_CONSTEVAL=0\n"
+      end
+
+      File.write(xcconfig_path, xcconfig)
+    end
+
+    fmt_base_header = File.join(installer.sandbox.root.to_s, 'fmt/include/fmt/base.h')
+    if File.exist?(fmt_base_header)
+      File.chmod(0644, fmt_base_header)
+      fmt_base = File.read(fmt_base_header)
+      unless fmt_base.include?('RN_FMT_CONSTEVAL_PATCH')
+        fmt_base.sub!(
+          '// Detect consteval, C++20 constexpr extensions and std::is_constant_evaluated.',
+          "#if !defined(FMT_USE_CONSTEVAL)\n// RN_FMT_CONSTEVAL_PATCH\n// Detect consteval, C++20 constexpr extensions and std::is_constant_evaluated."
+        )
+        fmt_base.sub!(
+          "#if FMT_USE_CONSTEVAL\n#  define FMT_CONSTEVAL consteval",
+          "#endif\n#if FMT_USE_CONSTEVAL\n#  define FMT_CONSTEVAL consteval"
+        )
+        File.write(fmt_base_header, fmt_base)
+      end
+    end
+  end
+end

@@ -1,0 +1,4 @@
+/Users/prasanth/Development/regent-ai-mobile/android/app/.cxx/Debug/5a5q1c6d/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/foo.dir
+/Users/prasanth/Development/regent-ai-mobile/android/app/.cxx/Debug/5a5q1c6d/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/boo.dir
+/Users/prasanth/Development/regent-ai-mobile/android/app/.cxx/Debug/5a5q1c6d/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/edit_cache.dir
+/Users/prasanth/Development/regent-ai-mobile/android/app/.cxx/Debug/5a5q1c6d/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/rebuild_cache.dir

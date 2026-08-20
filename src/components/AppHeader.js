@@ -1,0 +1,112 @@
+import React from "react";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { ChevronDown, ChevronLeft } from "lucide-react-native";
+import { colors } from "../constants/colors";
+import { fontStyles, weights } from "../constants/typography";
+
+export const MAIN_HEADER_LOGO_URL =
+  "https://pub-d423d28126b8427881b12df516c6520a.r2.dev/Frame%2026796%20(1).png";
+
+export function BackHeader({
+  title,
+  onBack,
+  arrowOnly = false,
+  style
+}) {
+  return (
+    <View style={[styles.backHeader, arrowOnly && styles.arrowOnlyHeader, style]}>
+      <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>
+        <ChevronLeft size={30} color={colors.text} strokeWidth={1.5} />
+      </Pressable>
+      {arrowOnly ? null : <Text style={styles.backTitle}>{title}</Text>}
+    </View>
+  );
+}
+
+export function MainHeader({ logoUrl = MAIN_HEADER_LOGO_URL }) {
+  return (
+    <View style={styles.mainHeader}>
+      <View style={styles.brandRow}>
+        <Image source={{ uri: logoUrl }} resizeMode="contain" style={styles.logoImage} />
+        <ChevronDown size={28} color={colors.text} strokeWidth={2.2} />
+      </View>
+      <View style={styles.profileWrap}>
+        <Image source={{ uri: "https://i.pravatar.cc/80?img=12" }} style={styles.avatar} />
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>80</Text>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  backHeader: {
+    height: 64,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderLight,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    backgroundColor: colors.white
+  },
+  arrowOnlyHeader: {
+    borderBottomWidth: 0
+  },
+  backButton: {
+    width: 44,
+    height: 44,
+    justifyContent: "center"
+  },
+  backTitle: {
+    color: colors.neutrals900,
+    ...fontStyles.lgBold,
+    marginLeft: 8
+  },
+  mainHeader: {
+    height: 74,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderLight,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 14,
+    backgroundColor: colors.white
+  },
+  brandRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10
+  },
+  logoImage: {
+    width: 220,
+    height: 150
+  },
+  profileWrap: {
+    width: 44,
+    height: 44
+  },
+  avatar: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    marginTop: 5
+  },
+  badge: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.red700,
+    paddingHorizontal: 3
+  },
+  badgeText: {
+    color: colors.white,
+    fontSize: 10,
+    fontWeight: weights.bold
+  }
+});
