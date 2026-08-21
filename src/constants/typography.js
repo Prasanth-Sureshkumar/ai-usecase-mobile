@@ -22,6 +22,16 @@ export const fontStyles = {
     lineHeight: 16,
     fontWeight: weights.bold,
   },
+  xmRegular:{
+    fontSize: 14,
+    lineHeight: 16,
+    fontWeight: weights.regular,
+  },
+  xmBold:{
+    fontSize: 14,
+    lineHeight: 16,
+    fontWeight: weights.bold,
+  },
   smRegular: {
     fontSize: 16,
     lineHeight: 20,

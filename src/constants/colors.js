@@ -1,9 +1,13 @@
 export const colors = {
+  transparent: "transparent",
   white: "#FFFFFF",
   text: "#171A22",
   navy: "#071B45",
   primary: "#315BC5",
   primaryDark: "#214EBC",
+  primary100: "#EBF1FF",
+  primary100: "#EBF1FF",
+  primary400: "#5179D6",
   primary500: "#2952B5",
   primarySoft: "#EAF0FF",
   border: "#A9ADB4",
@@ -14,6 +18,8 @@ export const colors = {
   surfaceSoft: "#F2F3F7",
   tabLine: "#E6E7EA",
   red: "#F11515",
+  red500: "#C95151",
+  red600: "#B9454B",
   red700: "#9B353D",
   redText: "#B83A3A",
   redSoft: "#FFF8F8",
@@ -22,5 +28,7 @@ export const colors = {
   black: "#000000",
   neutrals900: "#11141A",
   neutrals300: "#9EA0A3",
-  neutrals50: "#F4F5F8"
+  neutrals100: "#E7E8EC",
+  neutrals500: "#5F6269",
+  neutrals50: "#F4F5F8",
 };

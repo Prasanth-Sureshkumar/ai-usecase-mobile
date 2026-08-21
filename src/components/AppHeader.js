@@ -1,5 +1,6 @@
 import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { colors } from "../constants/colors";
 import { fontStyles, weights } from "../constants/typography";
 import Icon, { IconMap } from "./Icons";
@@ -50,18 +51,29 @@ export function BackHeader({
 }
 
 export function MainHeader({ logoUrl = MAIN_HEADER_LOGO_URL }) {
+  const navigation = useNavigation();
+
+  function openProfile() {
+    const parentNavigation = navigation.getParent?.();
+    if (parentNavigation) {
+      parentNavigation.navigate("PersonalProfile");
+      return;
+    }
+    navigation.navigate("PersonalProfile");
+  }
+
   return (
     <View style={styles.mainHeader}>
       <View style={styles.brandRow}>
         <Image source={{ uri: logoUrl }} resizeMode="contain" style={styles.logoImage} />
         <Icon name={IconMap.dropDown} color={colors.neutrals900} size={25} />
       </View>
-      <View style={styles.profileWrap}>
+      <Pressable onPress={openProfile} hitSlop={10} style={({ pressed }) => [styles.profileWrap, pressed && styles.pressed]}>
         <Image source={{ uri: "https://i.pravatar.cc/80?img=12" }} style={styles.avatar} />
         <View style={styles.badge}>
           <Text style={styles.badgeText}>80</Text>
         </View>
-      </View>
+      </Pressable>
     </View>
   );
 }
@@ -127,6 +139,9 @@ const styles = StyleSheet.create({
   profileWrap: {
     width: 44,
     height: 44
+  },
+  pressed: {
+    opacity: 0.76
   },
   avatar: {
     width: 38,

@@ -17,6 +17,7 @@ export default function AppInput({
   autoCapitalize = "none",
   rightIcon,
   onRightPress,
+  rightElement,
   onFocus,
   error
 }) {
@@ -49,6 +50,7 @@ export default function AppInput({
             <Icon name={IconMap.pencil} color={colors.neutrals900} size={18} />
           </Pressable>
         ) : null}
+        {rightElement || null}
       </View>
       {error ? <Text style={styles.error}>{error}</Text> : null}
     </View>

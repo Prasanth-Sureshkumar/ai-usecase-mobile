@@ -73,3 +73,32 @@ export async function register(payload) {
   }
   return { success: true };
 }
+
+export async function logout() {
+  await delay(350);
+  return { success: true };
+}
+
+export async function updatePersonalInformation(payload) {
+  await delay(650);
+  if (payload.email?.trim().toLowerCase() === "error@regents.school") {
+    return { success: false, message: "Unable to update personal information." };
+  }
+  return { success: true, user: payload };
+}
+
+export async function changePassword({ currentPassword, newPassword }) {
+  await delay(650);
+  if (!currentPassword || !newPassword) {
+    return { success: false, message: "Please complete both password fields." };
+  }
+  if (currentPassword === "wrongpassword") {
+    return { success: false, message: "Current password is incorrect." };
+  }
+  return { success: true };
+}
+
+export async function deactivateAccount() {
+  await delay(700);
+  return { success: true };
+}

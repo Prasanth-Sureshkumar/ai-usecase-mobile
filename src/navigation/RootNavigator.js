@@ -11,6 +11,13 @@ import RegistrationSuccessScreen from "../screens/RegistrationSuccessScreen";
 import PostAuthSplashScreen from "../screens/PostAuthSplashScreen";
 import MainAppScreen from "../screens/MainAppScreen";
 import DynamicWebViewScreen from "../screens/DynamicWebViewScreen";
+import PersonalProfileScreen from "../screens/PersonalProfileScreen";
+import ProfileInfoScreen from "../screens/ProfileInfoScreen";
+import EditPersonalInfoScreen from "../screens/EditPersonalInfoScreen";
+import SettingsScreen from "../screens/SettingsScreen";
+import AccountSettingsScreen from "../screens/AccountSettingsScreen";
+import ChangePasswordScreen from "../screens/ChangePasswordScreen";
+import DeactivateAccountScreen from "../screens/DeactivateAccountScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -124,6 +131,41 @@ export default function RootNavigator() {
           name="InAppBrowser"
           component={DynamicWebViewScreen}
           options={(props) => getStackHeaderOptions(props, { fallbackTitle: "Webview" })}
+        />
+        <Stack.Screen
+          name="PersonalProfile"
+          component={PersonalProfileScreen}
+          options={(props) => getStackHeaderOptions(props, { fallbackTitle: "Personal Profile" })}
+        />
+        <Stack.Screen
+          name="ProfileInfo"
+          component={ProfileInfoScreen}
+          options={(props) => getStackHeaderOptions(props, { fallbackTitle: "Personal Info" })}
+        />
+        <Stack.Screen
+          name="EditPersonalInfo"
+          component={EditPersonalInfoScreen}
+          options={(props) => getStackHeaderOptions(props, { fallbackTitle: "Personal Information" })}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={(props) => getStackHeaderOptions(props, { fallbackTitle: "Settings" })}
+        />
+        <Stack.Screen
+          name="AccountSettings"
+          component={AccountSettingsScreen}
+          options={(props) => getStackHeaderOptions(props, { fallbackTitle: "Account Settings" })}
+        />
+        <Stack.Screen
+          name="ChangePassword"
+          component={ChangePasswordScreen}
+          options={(props) => getStackHeaderOptions(props, { fallbackTitle: "Change Password" })}
+        />
+        <Stack.Screen
+          name="DeactivateAccount"
+          component={DeactivateAccountScreen}
+          options={(props) => getStackHeaderOptions(props, { fallbackTitle: "Deactivate Account" })}
         />
       </Stack.Navigator>
     </NavigationContainer>

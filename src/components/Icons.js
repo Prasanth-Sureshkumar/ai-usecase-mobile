@@ -5,16 +5,32 @@ import { colors } from "../constants/colors";
 export const ICON_FONT_FAMILY = "icons";
 
 export const IconMap = {
+  threedotAlt: 0xE81E,
+  eyeOff: 0xE833,
+  eye: 0xE841,
   regentSprinke: 0xE806,
   document: 0xE808,
-  pencil: 0xE807,
+  pencil: 0xE80A,
   threedot: 0xE81E,
   rightArrow: 0xE801,
   leftArrow: 0xE800,
+  rightOpen: 0xF006,
+  leftOpen: 0xF007,
   dropDown: 0xF004,
   backArrowLeft: 0xF007,
   alert: 0xE809,
   check: 0xE80B,
+  dustbin: 0xE80C,
+  lock: 0xE80D,
+  userPlaceholder: 0xE80F,
+  message: 0xE810,
+  phone: 0xE811,
+  gender: 0xE812,
+  gear: 0xE813,
+  exitIcon: 0xE814,
+  userRemove: 0xE80E,
+  caution: 0xE815,
+  cake: 0xE816,
 };
 
 export function getIconGlyph(name) {

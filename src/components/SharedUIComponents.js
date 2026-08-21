@@ -1,0 +1,382 @@
+import React from "react";
+import {
+  ActivityIndicator,
+  Image,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View
+} from "react-native";
+import { colors } from "../constants/colors";
+import { fontStyles, weights } from "../constants/typography";
+import Icon, { IconMap } from "./Icons";
+
+export const PROFILE_USER = {
+  name: "Stephen M. Mille",
+  fullName: "Stephen M. Millemartins",
+  location: "Charlottesville, United States",
+  role: "Parent",
+  dateOfBirth: "19/04/2003",
+  gender: "Male",
+  phone: "+1 678-384-5200",
+  email: "dyson@justoglobal.com",
+  profileComplete: 50,
+  avatarUrl: "https://i.pravatar.cc/320?img=47"
+};
+
+export function Avatar({ uri, size = 75, editable = false, onPress, style }) {
+  return (
+    <Pressable disabled={!onPress} onPress={onPress} style={[{ width: size, height: size }, style]}>
+      <Image source={{ uri }} style={[styles.avatar, { width: size, height: size, borderRadius: size / 2 }]} />
+      {editable ? (
+        <View style={styles.avatarEdit}>
+          <Icon name={IconMap.pencil} color={colors.white} size={14} />
+        </View>
+      ) : null}
+    </Pressable>
+  );
+}
+
+export function GlyphBadge({ iconName, iconSize, outerRadius, color = colors.neutrals900, backgroundColor = colors.neutrals100 }) {
+
+  return (
+    <View style={[styles.glyphBadge, { width: outerRadius, height: outerRadius, borderRadius: outerRadius / 2 }, { backgroundColor }]}>
+      <Icon name={iconName} size={iconSize} color={color} />
+    </View>
+  );
+}
+
+export function RoundChevron({ }) {
+  return (
+    <View style={styles.chevronCircle}>
+      <Icon name={IconMap.rightOpen} color={colors.white} size={10} />
+    </View>
+  );
+}
+
+export function ActionListRow({
+  title,
+  iconName,
+  onPress,
+  showChevron = true,
+  withDivider = false,
+  color = colors.neutrals900,
+  outerRadius = 0,
+  iconSize = 0,
+  backgroundColor = colors.neutrals100,
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      disabled={!onPress}
+      style={({ pressed }) => [
+        styles.row,
+        withDivider && styles.rowDivider,
+        pressed && onPress && styles.pressed
+      ]}
+    >
+      <GlyphBadge
+        iconName={iconName}
+        iconSize={iconSize}
+        outerRadius={outerRadius}
+        color={color}
+        backgroundColor={backgroundColor}
+      />
+      <Text style={[styles.rowTitle, { color: color }]} numberOfLines={1}>
+        {title}
+      </Text>
+      {showChevron ? <RoundChevron /> : null}
+    </Pressable>
+  );
+}
+
+export function InfoRow({
+  iconName = null,
+  color = colors.neutrals900,
+  outerRadius = 0,
+  iconSize = 0,
+  backgroundColor = colors.neutrals100,
+  value = null,
+}) {
+  return (
+    <View style={styles.infoRow}>
+      <GlyphBadge
+        iconName={iconName}
+        iconSize={iconSize}
+        outerRadius={outerRadius}
+        color={color}
+        backgroundColor={backgroundColor}
+      />
+      <Text style={styles.infoText} numberOfLines={1}>{value}</Text>
+    </View>
+  );
+}
+
+export function ConfirmationDialog({
+  visible,
+  title,
+  message,
+  confirmLabel,
+  cancelLabel = "Cancel",
+  loading = false,
+  onCancel,
+  onConfirm,
+  destructive = true,
+}) {
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
+      <TouchableWithoutFeedback onPress={loading ? undefined : onCancel}>
+        <View style={styles.modalOverlay}>
+          <TouchableWithoutFeedback>
+            <View style={styles.dialog}>
+              <View style={[styles.alertIcon, !destructive && styles.successIcon]}>
+                {destructive ? (
+                  <Icon name={IconMap.caution} color={colors.red600} size={38} />
+                ) : (
+                  <Icon name={IconMap.check} color={colors.primary500} size={34} />
+                )}
+              </View>
+              <Text style={styles.dialogTitle}>{title}</Text>
+              <Text style={styles.dialogMessage}>{message}</Text>
+              <View style={styles.dialogActions}>
+                <Pressable
+                  disabled={loading}
+                  onPress={onConfirm}
+                  style={({ pressed }) => [
+                    styles.dialogButton,
+                    destructive ? styles.destructiveButton : styles.primaryButton,
+                    pressed && styles.pressed,
+                    loading && styles.disabled
+                  ]}
+                >
+                  {loading ? <ActivityIndicator color={colors.white} /> : <Text style={styles.filledButtonText}>{confirmLabel}</Text>}
+                </Pressable>
+                {onCancel &&
+                  <Pressable
+                    disabled={loading}
+                    onPress={onCancel}
+                    style={({ pressed }) => [styles.dialogButton, styles.outlineButton, pressed && styles.pressed]}
+                  >
+                    <Text style={styles.outlineButtonText}>{cancelLabel}</Text>
+                  </Pressable>
+                }
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
+  );
+}
+
+export function PhotoActionSheet({
+  visible,
+  hasImage = true,
+  onUpload,
+  onCapture,
+  onRemove,
+  onCancel
+}) {
+  return (
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onCancel}>
+      <TouchableWithoutFeedback onPress={onCancel}>
+        <View style={styles.sheetOverlay}>
+          <TouchableWithoutFeedback>
+            <View style={styles.sheet}>
+              <Text style={styles.sheetTitle}>Profile Photo</Text>
+              <SheetAction label="Upload Image" onPress={onUpload} />
+              <SheetAction label="Capture Image" onPress={onCapture} />
+              {hasImage ? <SheetAction label="Remove Image" onPress={onRemove} danger /> : null}
+              <SheetAction label="Cancel" onPress={onCancel} />
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
+  );
+}
+
+function SheetAction({ label, onPress, danger = false }) {
+  return (
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.sheetAction, pressed && styles.pressed]}>
+      <Text style={[styles.sheetActionText, danger && styles.dangerText]}>{label}</Text>
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  avatar: {
+    borderWidth: 2,
+    borderColor: colors.neutrals100,
+  },
+  avatarEdit: {
+    position: "absolute",
+    right: 4,
+    bottom: 4,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.primary500,
+    borderWidth: 2,
+    borderColor: colors.white
+  },
+  glyphBadge: {
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  glyphText: {
+    fontSize: 12,
+    lineHeight: 18,
+    fontWeight: weights.bold
+  },
+  chevronCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.primary500
+  },
+  dangerChevron: {
+    backgroundColor: colors.redText
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 15,
+    paddingVertical: 15,
+  },
+  rowDivider: {
+    borderTopWidth: 1,
+    borderTopColor: colors.neutrals100
+  },
+  rowTitle: {
+    flex: 1,
+    color: colors.neutrals900,
+    ...fontStyles.smRegular
+  },
+  dangerText: {
+    color: colors.redText
+  },
+  infoRow: {
+    paddingVertical: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14
+  },
+  infoText: {
+    flex: 1,
+    color: colors.neutrals900,
+    ...fontStyles.smRegular
+  },
+  pressed: {
+    opacity: 0.76
+  },
+  disabled: {
+    opacity: 0.7
+  },
+  modalOverlay: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.32)",
+    paddingHorizontal: 24
+  },
+  dialog: {
+    width: "100%",
+    maxWidth: 380,
+    borderRadius: 8,
+    backgroundColor: colors.white,
+    alignItems: "center",
+    paddingHorizontal: 28,
+    paddingTop: 20,
+    paddingBottom: 22
+  },
+  alertIcon: {
+    height: 48,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 4
+  },
+  successIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: colors.primarySoft
+  },
+  dialogTitle: {
+    color: colors.neutrals900,
+    ...fontStyles.lgBold,
+    textAlign: "center",
+    marginTop: 8
+  },
+  dialogMessage: {
+    color: colors.neutrals900,
+    ...fontStyles.smRegular,
+    textAlign: "center",
+    marginTop: 10
+  },
+  dialogActions: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 22
+  },
+  dialogButton: {
+    flex: 1,
+    height: 52,
+    borderRadius: 26,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  destructiveButton: {
+    backgroundColor: colors.red600
+  },
+  primaryButton: {
+    backgroundColor: colors.primary500
+  },
+  outlineButton: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.white
+  },
+  filledButtonText: {
+    color: colors.white,
+    ...fontStyles.smRegular,
+  },
+  outlineButtonText: {
+    color: colors.neutrals900,
+    ...fontStyles.smRegular
+  },
+  sheetOverlay: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0, 0, 0, 0.28)"
+  },
+  sheet: {
+    backgroundColor: colors.white,
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+    paddingHorizontal: 22,
+    paddingTop: 18,
+    paddingBottom: 32
+  },
+  sheetTitle: {
+    color: colors.neutrals900,
+    ...fontStyles.lgBold,
+    marginBottom: 10
+  },
+  sheetAction: {
+    minHeight: 52,
+    justifyContent: "center",
+    borderTopWidth: 1,
+    borderTopColor: colors.borderLight
+  },
+  sheetActionText: {
+    color: colors.neutrals900,
+    ...fontStyles.mdRegular
+  }
+});
