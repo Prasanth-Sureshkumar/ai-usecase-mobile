@@ -2,7 +2,7 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StyleSheet } from "react-native";
-import { BackHeader, MAIN_HEADER_LOGO_URL, MainHeader } from "../components/AppHeader";
+import { BackHeader } from "../components/AppHeader";
 import InitialSplashScreen from "../screens/InitialSplashScreen";
 import PreLoginScreen from "../screens/PreLoginScreen";
 import LoginScreen from "../screens/LoginScreen";
@@ -10,68 +10,121 @@ import RegisterScreen from "../screens/RegisterScreen";
 import RegistrationSuccessScreen from "../screens/RegistrationSuccessScreen";
 import PostAuthSplashScreen from "../screens/PostAuthSplashScreen";
 import MainAppScreen from "../screens/MainAppScreen";
+import DynamicWebViewScreen from "../screens/DynamicWebViewScreen";
 
 const Stack = createNativeStackNavigator();
 
-function renderMainHeader() {
-  return <MainHeader logoUrl={MAIN_HEADER_LOGO_URL} />;
+function resolveOptionValue(value, params) {
+  return typeof value === "function" ? value(params) : value;
 }
 
-function createBackHeaderOptions(title, headerProps = {}) {
-  return ({ navigation }) => ({
+export function getStackHeaderOptions(
+  { navigation, route },
+  {
+    title,
+    fallbackTitle,
+    gestureEnabled = false,
+    headerProps,
+    headerTransparent = false
+  } = {}
+) {
+  const params = { navigation, route };
+  const resolvedHeaderProps = resolveOptionValue(headerProps, params) || {};
+  const resolvedTitle = resolveOptionValue(title, params) || route.params?.title || fallbackTitle;
+
+  return {
     headerShown: true,
+    headerTransparent,
+    gestureEnabled,
     header: () => (
       <BackHeader
-        title={title}
+        title={resolvedTitle}
         onBack={() => navigation.goBack()}
-        {...headerProps}
+        {...resolvedHeaderProps}
       />
     )
+  };
+}
+
+export function getHiddenHeaderOptions({ gestureEnabled = false } = {}) {
+  return {
+    headerShown: false,
+    gestureEnabled
+  };
+}
+
+export function getActionHeaderOptions({
+  navigation,
+  route
+}, {
+  title,
+  fallbackTitle,
+  actionText,
+  testID,
+  gestureEnabled = false
+}) {
+  return getStackHeaderOptions({ navigation, route }, {
+    title,
+    fallbackTitle,
+    gestureEnabled,
+    headerProps: (params) => ({
+      isTitleBold: true,
+      actionText: resolveOptionValue(actionText, params),
+      onActionPressRef: params.route.params?.onActionPress || params.route.params?.onPost,
+      actionInProgress: Boolean(params.route.params?.isLoading),
+      testID
+    })
   });
 }
 
-function getPreLoginOptions({ navigation, route }) {
-  if (!route.params?.showHeader) {
-    return { headerShown: false };
-  }
-
-  return {
-    headerShown: true,
-    header: () => <BackHeader title="New User" onBack={() => navigation.goBack()} />
-  };
+export function getHiddenDetailOptions() {
+  return getHiddenHeaderOptions({
+    gestureEnabled: false
+  });
 }
-
-function getLoginOptions({ navigation }) {
-  return {
-    headerShown: true,
-    headerTransparent: true,
-    header: () => (
-      <BackHeader
-        arrowOnly
-        onBack={() => navigation.goBack()}
-        style={styles.transparentBackHeader}
-      />
-    )
-  };
-}
-
-const REGISTER_OPTIONS = createBackHeaderOptions("Registration");
-const MAIN_APP_OPTIONS = {
-  headerShown: true,
-  header: renderMainHeader
-};
 
 export default function RootNavigator() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="InitialSplash" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="InitialSplash" component={InitialSplashScreen} />
-        <Stack.Screen name="PreLogin" component={PreLoginScreen} options={getPreLoginOptions} />
-        <Stack.Screen name="Login" component={LoginScreen} options={getLoginOptions} />
-        <Stack.Screen name="Register" component={RegisterScreen} options={REGISTER_OPTIONS} />
+        <Stack.Screen
+          name="PreLogin"
+          component={PreLoginScreen}
+          options={(props) => (
+            props.route.params?.showHeader
+              ? getStackHeaderOptions(props, { fallbackTitle: "New User" })
+              : getHiddenHeaderOptions()
+          )}
+        />
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={(props) => getStackHeaderOptions(props, {
+            headerTransparent: true,
+            headerProps: {
+              arrowOnly: true,
+              style: styles.transparentBackHeader
+            }
+          })}
+        />
+        <Stack.Screen
+          name="Register"
+          component={RegisterScreen}
+          options={(props) => getStackHeaderOptions(props, { fallbackTitle: "Registration" })}
+        />
         <Stack.Screen name="RegistrationSuccess" component={RegistrationSuccessScreen} />
         <Stack.Screen name="PostAuthSplash" component={PostAuthSplashScreen} />
-        <Stack.Screen name="MainApp" component={MainAppScreen} options={MAIN_APP_OPTIONS} />
+        <Stack.Screen
+          name="MainApp"
+          component={MainAppScreen}
+          options={() => getHiddenHeaderOptions()}
+        />
+        <Stack.Screen
+          name="InAppBrowser"
+          component={DynamicWebViewScreen}
+          options={(props) => getStackHeaderOptions(props, { fallbackTitle: "Webview" })}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

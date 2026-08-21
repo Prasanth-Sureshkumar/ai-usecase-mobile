@@ -1,12 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import { BackHandler, Linking, Platform, StyleSheet, Text, View } from "react-native";
+import { BackHandler, Linking, Platform, StyleSheet, View } from "react-native";
 import { WebView } from "react-native-webview";
 import ErrorMessage from "../components/ErrorMessage";
 import LoadingIndicator from "../components/LoadingIndicator";
 import { colors } from "../constants/colors";
 import { isValidUrl } from "../utils/validation";
 
-export default function DynamicWebViewScreen({ title, url, active = true }) {
+export default function DynamicWebViewScreen(props) {
+  const {
+    url,
+    active = true
+  } = props.route?.params ?? props;
   const webViewRef = useRef(null);
   const [canGoBack, setCanGoBack] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -36,7 +40,6 @@ export default function DynamicWebViewScreen({ title, url, active = true }) {
 
   return (
     <View style={styles.container}>
-      {title ? <Text style={styles.hiddenTitle}>{title}</Text> : null}
       <WebView
         ref={webViewRef}
         source={{ uri: url }}
@@ -75,12 +78,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white
-  },
-  hiddenTitle: {
-    position: "absolute",
-    height: 0,
-    width: 0,
-    opacity: 0
   },
   loader: {
     ...StyleSheet.absoluteFillObject,

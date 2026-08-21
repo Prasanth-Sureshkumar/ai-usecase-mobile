@@ -12,5 +12,5 @@ export const screen = {
   authTop: 78,
   fieldHeight: 58,
   buttonHeight: 58,
-  bottomTabsHeight: 92
+  bottomTabsHeight: 75
 };

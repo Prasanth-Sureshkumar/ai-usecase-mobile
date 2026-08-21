@@ -3,16 +3,21 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { colors } from "../constants/colors";
 import { fontStyles } from "../constants/typography";
 import Icon from "../components/Icons";
+import { useNavigation } from "@react-navigation/native";
 
 const moreItems = [
-  { id: "admin", title: "Admin Panel", imageUrl: "https://pub-d423d28126b8427881b12df516c6520a.r2.dev/adminpanel.png" },
+  { id: "admin", title: "Admin Panel", imageUrl: "https://pub-d423d28126b8427881b12df516c6520a.r2.dev/adminpanel.png", url: "https://www.youtube.com", openInBrowser:true, active:true },
   { id: "about", title: "About Regent", imageUrl: "https://pub-d423d28126b8427881b12df516c6520a.r2.dev/about.png" },
-  { id: "terms", title: "Terms & Condition", imageUrl: "https://pub-d423d28126b8427881b12df516c6520a.r2.dev/Terms.png" }
+  { id: "terms", title: "Terms & Condition", imageUrl: "https://pub-d423d28126b8427881b12df516c6520a.r2.dev/Terms.png", url:"https://www.youtube.com", openInBrowser:true, active:true }
 ];
 
 export default function MoreScreen() {
+  const navigation= useNavigation();
   function handleMoreItemPress(item) {
     if (!item) return;
+    if(item.openInBrowser){
+      navigation.navigate("InAppBrowser",item)
+    }
   }
 
   return (

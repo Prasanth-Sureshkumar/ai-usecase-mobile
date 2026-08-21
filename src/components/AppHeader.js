@@ -11,14 +11,40 @@ export function BackHeader({
   title,
   onBack,
   arrowOnly = false,
-  style
+  style,
+  isTitleBold = true,
+  actionText,
+  onActionPress,
+  onActionPressRef,
+  actionInProgress = false,
+  testID
 }) {
+  const actionHandler = onActionPress || onActionPressRef?.current || onActionPressRef;
+
   return (
-    <View style={[styles.backHeader, arrowOnly && styles.arrowOnlyHeader, style]}>
-      <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>
+    <View style={[styles.backHeader, arrowOnly && styles.arrowOnlyHeader, style]} testID={testID}>
+      <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} testID={testID ? `${testID}-back` : undefined}>
         <Icon name={IconMap.backArrowLeft} color={colors.neutrals900} size={25}/>
       </Pressable>
-      {arrowOnly ? null : <Text style={styles.backTitle}>{title}</Text>}
+      {arrowOnly ? null : (
+        <Text
+          numberOfLines={1}
+          style={[styles.backTitle, !isTitleBold && styles.regularTitle]}
+        >
+          {title}
+        </Text>
+      )}
+      {actionText ? (
+        <Pressable
+          disabled={actionInProgress}
+          hitSlop={12}
+          onPress={actionHandler}
+          style={[styles.actionButton, actionInProgress && styles.disabledAction]}
+          testID={testID ? `${testID}-action` : undefined}
+        >
+          <Text style={styles.actionText}>{actionText}</Text>
+        </Pressable>
+      ) : null}
     </View>
   );
 }
@@ -59,9 +85,25 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   backTitle: {
+    flex: 1,
     color: colors.neutrals900,
     ...fontStyles.lgBold,
     marginLeft: 8
+  },
+  regularTitle: {
+    ...fontStyles.lgRegular
+  },
+  actionButton: {
+    minHeight: 44,
+    justifyContent: "center",
+    paddingLeft: 12
+  },
+  disabledAction: {
+    opacity: 0.5
+  },
+  actionText: {
+    color: colors.primary500,
+    ...fontStyles.smBold
   },
   mainHeader: {
     height: 74,
