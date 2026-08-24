@@ -4,6 +4,9 @@ import { useNavigation } from "@react-navigation/native";
 import { colors } from "../constants/colors";
 import { fontStyles, weights } from "../constants/typography";
 import Icon, { IconMap } from "./Icons";
+import { useUser } from "../context/UserContext";
+
+const PLACEHOLDER_PROFILE_IMAGE = require("../assets/images/placeholder.png");
 
 export const MAIN_HEADER_LOGO_URL =
   "https://pub-d423d28126b8427881b12df516c6520a.r2.dev/Frame%2026796%20(1).png";
@@ -52,6 +55,10 @@ export function BackHeader({
 
 export function MainHeader({ logoUrl = MAIN_HEADER_LOGO_URL }) {
   const navigation = useNavigation();
+  const { user } = useUser();
+  const profileImage = typeof user?.picture === "string" && user.picture
+    ? { uri: user.picture }
+    : PLACEHOLDER_PROFILE_IMAGE;
 
   function openProfile() {
     const parentNavigation = navigation.getParent?.();
@@ -66,13 +73,13 @@ export function MainHeader({ logoUrl = MAIN_HEADER_LOGO_URL }) {
     <View style={styles.mainHeader}>
       <View style={styles.brandRow}>
         <Image source={{ uri: logoUrl }} resizeMode="contain" style={styles.logoImage} />
-        <Icon name={IconMap.dropDown} color={colors.neutrals900} size={25} />
+        {/* <Icon name={IconMap.dropDown} color={colors.neutrals900} size={25} /> */}
       </View>
       <Pressable onPress={openProfile} hitSlop={10} style={({ pressed }) => [styles.profileWrap, pressed && styles.pressed]}>
-        <Image source={{ uri: "https://i.pravatar.cc/80?img=12" }} style={styles.avatar} />
-        <View style={styles.badge}>
+        <Image source={profileImage} style={styles.avatar} />
+        {/* <View style={styles.badge}>
           <Text style={styles.badgeText}>80</Text>
-        </View>
+        </View> */}
       </Pressable>
     </View>
   );

@@ -1,68 +1,106 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import AppButton from "../components/AppButton";
 import AppInput from "../components/AppInput";
-import { ConfirmationDialog, PROFILE_USER } from "../components/SharedUIComponents";
+import DatePickerDialog from "../components/DatePickerDialog";
 import KeyboardAwareScrollScreen from "../components/KeyboardAwareScrollScreen";
+import LoadingIndicator from "../components/LoadingIndicator";
+import OptionPickerDialog from "../components/OptionPickerDialog";
+import SelectField from "../components/SelectField";
+import { ConfirmationDialog } from "../components/SharedUIComponents";
 import { colors } from "../constants/colors";
 import { screen } from "../constants/spacing";
 import { fontStyles } from "../constants/typography";
+import { useUser } from "../context/UserContext";
 import { updatePersonalInformation } from "../services/user";
-import { validateEmail, validateRequired } from "../utils/validation";
+import { formatDateOnly, getDateOnlyValue } from "../utils/date";
+import { getDisplayDate } from "../utils/profile";
 
-export default function EditPersonalInfoScreen({ navigation, route }) {
-  const initialProfile = route.params?.profile || PROFILE_USER;
-  const [dateOfBirth, setDateOfBirth] = useState(initialProfile.dateOfBirth || "");
-  const [gender, setGender] = useState(initialProfile.gender || "");
-  const [phone, setPhone] = useState(initialProfile.phone || "");
-  const [email, setEmail] = useState(initialProfile.email || "");
+const GENDER_OPTIONS = [
+  { label: "Male", value: "Male" },
+  { label: "Female", value: "Female" }
+];
+
+export default function EditPersonalInfoScreen({ navigation }) {
+  const { user, setUser, refreshUser, loading } = useUser();
+  const canEditDateOfBirth = !user?.dateOfBirth;
+  const canEditGender = !user?.gender;
+  const [form, setForm] = useState({
+    dateOfBirth: "",
+    gender: "",
+    phoneNumber: "",
+    email: ""
+  });
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
   const [successVisible, setSuccessVisible] = useState(false);
+  const [datePickerVisible, setDatePickerVisible] = useState(false);
+  const [genderPickerVisible, setGenderPickerVisible] = useState(false);
+
+  useEffect(() => {
+    setForm({
+      dateOfBirth: user?.dateOfBirth ? formatDateOnly(getDateOnlyValue(user.dateOfBirth, null)) : "",
+      gender: user?.gender || "",
+      phoneNumber: user?.phoneNumber || "",
+      email: user?.email || ""
+    });
+  }, [user]);
+
+  function updateField(key, value) {
+    setForm((current) => ({ ...current, [key]: value }));
+    setErrors((current) => ({ ...current, [key]: "", form: "" }));
+  }
 
   async function submit() {
-    const nextErrors = {
-      dateOfBirth: validateRequired(dateOfBirth, "Date of birth"),
-      gender: validateRequired(gender, "Gender"),
-      phone: validateRequired(phone, "Phone"),
-      email: validateEmail(email)
+    if (saving) return;
+
+    setErrors({});
+    const payload = {
+      phoneNumber: form.phoneNumber.trim() || null
     };
 
-    setErrors(nextErrors);
-    if (Object.values(nextErrors).some(Boolean) || saving) return;
+    if (canEditDateOfBirth && form.dateOfBirth) {
+      payload.dateOfBirth = form.dateOfBirth;
+    }
+
+    if (canEditGender && form.gender) {
+      payload.gender = form.gender;
+    }
 
     setSaving(true);
-    const nextProfile = {
-      ...initialProfile,
-      dateOfBirth,
-      gender,
-      phone,
-      email
-    };
-    const response = await updatePersonalInformation(nextProfile);
+    const response = await updatePersonalInformation(payload);
     setSaving(false);
 
     if (!response.success) {
-      setErrors((current) => ({ ...current, form: response.message || "Unable to save details." }));
+      setErrors({ form: response.message || "Unable to save details." });
       return;
+    }
+
+    if (response.data) {
+      setUser(response.data);
+    } else {
+      await refreshUser();
     }
 
     setSuccessVisible(true);
   }
 
   function closeSuccess() {
-    const nextProfile = {
-      ...initialProfile,
-      dateOfBirth,
-      gender,
-      phone,
-      email
-    };
     setSuccessVisible(false);
-    navigation.popTo("ProfileInfo", {
-      profile: nextProfile,
-      title: nextProfile.fullName,
-    });
+    navigation.goBack();
+  }
+
+  const getMaximumDateOfBirth = () => {
+    const today = new Date();
+    return new Date(
+      today.getFullYear() - 13,
+      today.getMonth(),
+      today.getDate()
+    );
+  };
+
+  if (loading && !user) {
+    return <LoadingIndicator label="Loading profile..." />;
   }
 
   return (
@@ -72,46 +110,36 @@ export default function EditPersonalInfoScreen({ navigation, route }) {
         contentContainerStyle={styles.content}
       >
         <View style={styles.form}>
-          <AppInput
+          <SelectField
             label="Date of birth"
-            placeholder="DD/MM/YYYY"
-            value={dateOfBirth}
-            onChangeText={(value) => {
-              setDateOfBirth(value);
-              setErrors((current) => ({ ...current, dateOfBirth: "", form: "" }));
-            }}
+            value={getDisplayDate(form.dateOfBirth)}
+            placeholder="Select date of birth"
+            editable={canEditDateOfBirth}
+            onPress={() => setDatePickerVisible(true)}
             error={errors.dateOfBirth}
           />
-          <AppInput
+          <SelectField
             label="Gender"
-            placeholder="Enter gender"
-            value={gender}
-            onChangeText={(value) => {
-              setGender(value);
-              setErrors((current) => ({ ...current, gender: "", form: "" }));
-            }}
+            value={form.gender}
+            placeholder="Select gender"
+            editable={canEditGender}
+            onPress={() => setGenderPickerVisible(true)}
             error={errors.gender}
           />
           <AppInput
             label="Phone"
             placeholder="Enter phone number"
-            value={phone}
+            value={form.phoneNumber}
             keyboardType="phone-pad"
-            onChangeText={(value) => {
-              setPhone(value);
-              setErrors((current) => ({ ...current, phone: "", form: "" }));
-            }}
-            error={errors.phone}
+            onChangeText={(value) => updateField("phoneNumber", value)}
+            error={errors.phoneNumber}
           />
           <AppInput
             label="Email"
             placeholder="Enter email address"
-            value={email}
+            value={form.email}
             keyboardType="email-address"
-            onChangeText={(value) => {
-              setEmail(value);
-              setErrors((current) => ({ ...current, email: "", form: "" }));
-            }}
+            editable={false}
             error={errors.email}
           />
           {errors.form ? <Text style={styles.formError}>{errors.form}</Text> : null}
@@ -124,6 +152,28 @@ export default function EditPersonalInfoScreen({ navigation, route }) {
           style={styles.button}
         />
       </KeyboardAwareScrollScreen>
+
+      <DatePickerDialog
+        visible={datePickerVisible}
+        title="Select Date of Birth"
+        value={form.dateOfBirth}
+        maximumDate={getMaximumDateOfBirth()}
+        onCancel={() => setDatePickerVisible(false)}
+        onConfirm={(date) => {
+          updateField("dateOfBirth", formatDateOnly(date));
+          setDatePickerVisible(false);
+        }}
+      />
+      <OptionPickerDialog
+        visible={genderPickerVisible}
+        title="Select Gender"
+        options={GENDER_OPTIONS}
+        onCancel={() => setGenderPickerVisible(false)}
+        onSelect={(value) => {
+          updateField("gender", value);
+          setGenderPickerVisible(false);
+        }}
+      />
       <ConfirmationDialog
         visible={successVisible}
         title="Saved"

@@ -1,34 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import {
   Avatar,
   ActionListRow,
   ConfirmationDialog,
   InfoRow,
-  PhotoActionSheet,
-  PROFILE_USER
+  PhotoActionSheet
 } from "../components/SharedUIComponents";
 import { colors } from "../constants/colors";
 import { fontStyles } from "../constants/typography";
 import { logout } from "../services/user";
 import LinearGradient from "react-native-linear-gradient";
 import { IconMap } from "../components/Icons";
+import { useUser } from "../context/UserContext";
+import LoadingIndicator from "../components/LoadingIndicator";
+import { getDisplayDate, getDisplayName } from "../utils/profile";
 
-export default function ProfileInfoScreen({ navigation, route }) {
+const PLACEHOLDER_PROFILE_IMAGE = require("../assets/images/placeholder.png");
+
+export default function ProfileInfoScreen({ navigation }) {
+  const { user, setUser, loading } = useUser();
   const [logoutVisible, setLogoutVisible] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [photoSheetVisible, setPhotoSheetVisible] = useState(false);
-  const [profile, setProfile] = useState(route.params?.profile || PROFILE_USER);
-
-  useEffect(() => {
-    if (route.params?.profile) {
-      setProfile(route.params.profile);
-    }
-  }, [route.params?.profile]);
+  const profileImage = typeof user?.picture === "string" && user.picture
+    ? { uri: user.picture }
+    : PLACEHOLDER_PROFILE_IMAGE;
 
   async function confirmLogout() {
     setLoggingOut(true);
     await logout();
+    setUser(null);
     setLoggingOut(false);
     setLogoutVisible(false);
     navigation.reset({
@@ -37,9 +39,12 @@ export default function ProfileInfoScreen({ navigation, route }) {
     });
   }
 
-  function updatePhoto(uri) {
-    setProfile((current) => ({ ...current, avatarUrl: uri }));
+  function closePhotoSheet() {
     setPhotoSheetVisible(false);
+  }
+
+  if (loading && !user) {
+    return <LoadingIndicator label="Loading profile..." />;
   }
 
   return (
@@ -57,7 +62,7 @@ export default function ProfileInfoScreen({ navigation, route }) {
         >
           <View style={styles.hero}>
             <Avatar
-              uri={profile.avatarUrl || "https://i.pravatar.cc/320?img=68"}
+              source={profileImage}
               size={141}
               editable
               onPress={() => setPhotoSheetVisible(true)}
@@ -67,8 +72,8 @@ export default function ProfileInfoScreen({ navigation, route }) {
         </LinearGradient>
 
         <View style={styles.identity}>
-          <Text style={styles.name}>{profile.fullName}</Text>
-          <Text style={styles.role}>Role: {profile.role}</Text>
+          <Text style={styles.name}>{getDisplayName(user)}</Text>
+          <Text style={styles.role}>Role: {"parent"}</Text>
         </View>
 
         <View style={styles.section}>
@@ -76,15 +81,15 @@ export default function ProfileInfoScreen({ navigation, route }) {
             <Text style={styles.sectionTitle}>Personal Info</Text>
             <Text
               style={styles.editText}
-              onPress={() => navigation.navigate("EditPersonalInfo", { profile })}
+              onPress={() => navigation.navigate("EditPersonalInfo")}
             >
               Edit
             </Text>
           </View>
-          <InfoRow iconName={IconMap.cake} iconSize={24} outerRadius={40} value={profile.dateOfBirth} />
-          <InfoRow iconName={IconMap.gender} iconSize={24} outerRadius={40} value={profile.gender} />
-          <InfoRow iconName={IconMap.phone} iconSize={24} outerRadius={40} value={profile.phone} />
-          <InfoRow iconName={IconMap.message} iconSize={24} outerRadius={40} value={profile.email} />
+          <InfoRow iconName={IconMap.cake} iconSize={24} outerRadius={40} value={getDisplayDate(user?.dateOfBirth) || "-"} />
+          <InfoRow iconName={IconMap.gender} iconSize={24} outerRadius={40} value={user?.gender || "-"} />
+          <InfoRow iconName={IconMap.phone} iconSize={24} outerRadius={40} value={user?.phoneNumber || "-"} />
+          <InfoRow iconName={IconMap.message} iconSize={24} outerRadius={40} value={user?.email || "-"} />
         </View>
 
         <View style={styles.menuBlock}>
@@ -110,10 +115,10 @@ export default function ProfileInfoScreen({ navigation, route }) {
 
       <PhotoActionSheet
         visible={photoSheetVisible}
-        hasImage={Boolean(profile.avatarUrl)}
-        onUpload={() => updatePhoto("https://i.pravatar.cc/320?img=32")}
-        onCapture={() => updatePhoto("https://i.pravatar.cc/320?img=12")}
-        onRemove={() => updatePhoto("")}
+        hasImage={Boolean(user?.picture)}
+        onUpload={closePhotoSheet}
+        onCapture={closePhotoSheet}
+        onRemove={closePhotoSheet}
         onCancel={() => setPhotoSheetVisible(false)}
       />
       <ConfirmationDialog

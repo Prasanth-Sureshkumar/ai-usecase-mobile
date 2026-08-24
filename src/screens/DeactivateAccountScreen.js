@@ -5,14 +5,17 @@ import { colors } from "../constants/colors";
 import { fontStyles } from "../constants/typography";
 import { deactivateAccount } from "../services/user";
 import { IconMap } from "../components/Icons";
+import { useUser } from "../context/UserContext";
 
 export default function DeactivateAccountScreen({ navigation }) {
+  const { setUser } = useUser();
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   async function confirmDeactivate() {
     setSubmitting(true);
     await deactivateAccount();
+    setUser(null);
     setSubmitting(false);
     setConfirmVisible(false);
     navigation.reset({

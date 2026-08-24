@@ -13,23 +13,14 @@ import { colors } from "../constants/colors";
 import { fontStyles, weights } from "../constants/typography";
 import Icon, { IconMap } from "./Icons";
 
-export const PROFILE_USER = {
-  name: "Stephen M. Mille",
-  fullName: "Stephen M. Millemartins",
-  location: "Charlottesville, United States",
-  role: "Parent",
-  dateOfBirth: "19/04/2003",
-  gender: "Male",
-  phone: "+1 678-384-5200",
-  email: "dyson@justoglobal.com",
-  profileComplete: 50,
-  avatarUrl: "https://i.pravatar.cc/320?img=47"
-};
+export function Avatar({ uri, source, size = 75, editable = false, onPress, style }) {
+  const imageSource = source || (uri ? { uri } : null);
 
-export function Avatar({ uri, size = 75, editable = false, onPress, style }) {
   return (
     <Pressable disabled={!onPress} onPress={onPress} style={[{ width: size, height: size }, style]}>
-      <Image source={{ uri }} style={[styles.avatar, { width: size, height: size, borderRadius: size / 2 }]} />
+      {imageSource ? (
+        <Image source={imageSource} style={[styles.avatar, { width: size, height: size, borderRadius: size / 2 }]} />
+      ) : null}
       {editable ? (
         <View style={styles.avatarEdit}>
           <Icon name={IconMap.pencil} color={colors.white} size={14} />

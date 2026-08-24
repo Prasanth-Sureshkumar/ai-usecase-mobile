@@ -4,23 +4,36 @@ import {
   Avatar,
   ActionListRow,
   ConfirmationDialog,
-  PhotoActionSheet,
-  PROFILE_USER
+  PhotoActionSheet
 } from "../components/SharedUIComponents";
 import { colors } from "../constants/colors";
 import { fontStyles } from "../constants/typography";
 import { logout } from "../services/user";
 import { IconMap } from "../components/Icons";
+import { useUser } from "../context/UserContext";
+import LoadingIndicator from "../components/LoadingIndicator";
+import {
+  calculateProfileCompletion,
+  getDisplayName
+} from "../utils/profile";
+
+const PLACEHOLDER_PROFILE_IMAGE = require("../assets/images/placeholder.png");
 
 export default function PersonalProfileScreen({ navigation }) {
+  const { user, setUser, loading } = useUser();
   const [logoutVisible, setLogoutVisible] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [photoSheetVisible, setPhotoSheetVisible] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState(PROFILE_USER.avatarUrl);
+
+  const completion = calculateProfileCompletion(user);
+  const profileImage = typeof user?.picture === "string" && user.picture
+    ? { uri: user.picture }
+    : PLACEHOLDER_PROFILE_IMAGE;
 
   async function confirmLogout() {
     setLoggingOut(true);
     await logout();
+    setUser(null);
     setLoggingOut(false);
     setLogoutVisible(false);
     navigation.reset({
@@ -29,33 +42,36 @@ export default function PersonalProfileScreen({ navigation }) {
     });
   }
 
-  function useAlternatePhoto() {
-    setAvatarUrl("https://i.pravatar.cc/320?img=32");
+  function closePhotoSheet() {
     setPhotoSheetVisible(false);
+  }
+
+  if (loading && !user) {
+    return <LoadingIndicator label="Loading profile..." />;
   }
 
   return (
     <View style={styles.safe}>
       <View style={styles.profileBlock}>
         <PressableAvatar
-          avatarUrl={avatarUrl}
+          source={profileImage}
           onPress={() => setPhotoSheetVisible(true)}
         />
         <View style={styles.profileCopy}>
-          <Text style={styles.name} numberOfLines={1}>{PROFILE_USER.name}</Text>
+          <Text style={styles.name} numberOfLines={1}>{getDisplayName(user)}</Text>
           <Text
             style={styles.editLink}
-            onPress={() => navigation.navigate("ProfileInfo", { title: PROFILE_USER.fullName })}
+            onPress={() => navigation.navigate("ProfileInfo", { title: getDisplayName(user) })}
             suppressHighlighting={true}
           >
             Edit Profile
           </Text>
           <View style={styles.progressTrack}>
-            <View style={[styles.progressFill, { width: `${PROFILE_USER.profileComplete}%` }]} />
+            <View style={[styles.progressFill, { width: `${completion}%` }]} />
           </View>
           <View style={styles.progressLabels}>
             <Text style={styles.progressText}>Complete your profile</Text>
-            <Text style={styles.progressText}>{PROFILE_USER.profileComplete}%</Text>
+            <Text style={styles.progressText}>{completion}%</Text>
           </View>
         </View>
       </View>
@@ -82,14 +98,11 @@ export default function PersonalProfileScreen({ navigation }) {
 
       <PhotoActionSheet
         visible={photoSheetVisible}
-        hasImage={Boolean(avatarUrl)}
-        onUpload={useAlternatePhoto}
-        onCapture={useAlternatePhoto}
-        onRemove={() => {
-          setAvatarUrl("");
-          setPhotoSheetVisible(false);
-        }}
-        onCancel={() => setPhotoSheetVisible(false)}
+        hasImage={Boolean(user?.picture)}
+        onUpload={closePhotoSheet}
+        onCapture={closePhotoSheet}
+        onRemove={closePhotoSheet}
+        onCancel={closePhotoSheet}
       />
       <ConfirmationDialog
         visible={logoutVisible}
@@ -104,11 +117,12 @@ export default function PersonalProfileScreen({ navigation }) {
   );
 }
 
-function PressableAvatar({ avatarUrl }) {
+function PressableAvatar({ source, onPress }) {
   return (
     <Avatar
-      uri={avatarUrl || "https://i.pravatar.cc/320?img=68"}
+      source={source}
       size={75}
+      onPress={onPress}
     />
   );
 }
@@ -162,6 +176,11 @@ const styles = StyleSheet.create({
   progressText: {
     color: colors.neutrals500,
     ...fontStyles.xsmRegular,
+  },
+  missingText: {
+    color: colors.neutrals500,
+    ...fontStyles.xsmRegular,
+    marginTop: 4
   },
   divider: {
     height: 1,
