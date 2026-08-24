@@ -12,6 +12,7 @@ import { REQUEST_STATES } from "../types/auth";
 import { validateEmail } from "../utils/validation";
 import { validatePreLogin } from "../services/auth";
 import MyText from "../components/MyText";
+import { ROUTES } from "../navigation/routes";
 const PreLoginScreen = ({ navigation, route }) => {
   const [email, setEmail] = useState(route?.params?.email || "");
   const [emailError, setEmailError] = useState("");
@@ -34,9 +35,12 @@ const PreLoginScreen = ({ navigation, route }) => {
       }
 
       setState(REQUEST_STATES.SUCCESS);
-      navigation.navigate(response.userExists ? "Login" : "Register", {
-        email: email.trim().toLowerCase(),
-      });
+      navigation.navigate(
+        response.userExists ? ROUTES.LOGIN : ROUTES.REGISTER,
+        {
+          email: email.trim().toLowerCase(),
+        },
+      );
     } catch (error) {
       setState(REQUEST_STATES.ERROR);
       setApiError({ message: "Something went wrong. Please try again." });
@@ -52,10 +56,10 @@ const PreLoginScreen = ({ navigation, route }) => {
   return (
     <KeyboardAwareScrollScreen
       style={styles.screen}
-      contentContainerStyle={[
+      contentContainerStyle={StyleSheet.compose(
         styles.content,
         showHeader && styles.contentWithHeader,
-      ]}
+      )}
     >
       <AppLogo size={showHeader ? 110 : 112} style={styles.logo} />
       <View style={styles.copyBlock}>
@@ -93,7 +97,7 @@ const PreLoginScreen = ({ navigation, route }) => {
           Existing User Login?{" "}
           <MyText
             style={styles.link}
-            onPress={() => navigation.navigate("Login", { email })}
+            onPress={() => navigation.navigate(ROUTES.LOGIN, { email })}
           >
             Click here
           </MyText>

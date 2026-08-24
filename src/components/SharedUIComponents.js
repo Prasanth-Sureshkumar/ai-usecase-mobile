@@ -12,6 +12,34 @@ import { colors } from "../constants/colors";
 import { fontStyles, weights } from "../constants/typography";
 import Icon, { IconMap } from "./Icons";
 import MyText from "./MyText";
+
+const composeActionRowStyle = ({ pressed, onPress, withDivider }) =>
+  StyleSheet.compose(
+    StyleSheet.compose(styles.row, withDivider && styles.rowDivider),
+    pressed && onPress && styles.pressed,
+  );
+
+const composeDialogButtonStyle = ({
+  pressed,
+  loading,
+  destructive,
+  outline = false,
+}) => {
+  const buttonVariant = outline
+    ? styles.outlineButton
+    : destructive
+    ? styles.destructiveButton
+    : styles.primaryButton;
+
+  return StyleSheet.compose(
+    StyleSheet.compose(
+      StyleSheet.compose(styles.dialogButton, buttonVariant),
+      pressed && styles.pressed,
+    ),
+    loading && styles.disabled,
+  );
+};
+
 export const Avatar = ({
   uri,
   source,
@@ -26,15 +54,16 @@ export const Avatar = ({
     <Pressable
       disabled={!onPress}
       onPress={onPress}
-      style={[{ width: size, height: size }, style]}
+      style={StyleSheet.compose({ width: size, height: size }, style)}
     >
       {imageSource ? (
         <Image
           source={imageSource}
-          style={[
-            styles.avatar,
-            { width: size, height: size, borderRadius: size / 2 },
-          ]}
+          style={StyleSheet.compose(styles.avatar, {
+            width: size,
+            height: size,
+            borderRadius: size / 2,
+          })}
         />
       ) : null}
       {editable ? (
@@ -54,15 +83,14 @@ export const GlyphBadge = ({
 }) => {
   return (
     <View
-      style={[
-        styles.glyphBadge,
-        {
+      style={StyleSheet.compose(
+        StyleSheet.compose(styles.glyphBadge, {
           width: outerRadius,
           height: outerRadius,
           borderRadius: outerRadius / 2,
-        },
+        }),
         { backgroundColor },
-      ]}
+      )}
     >
       <Icon name={iconName} size={iconSize} color={color} />
     </View>
@@ -90,11 +118,9 @@ export const ActionListRow = ({
     <Pressable
       onPress={onPress}
       disabled={!onPress}
-      style={({ pressed }) => [
-        styles.row,
-        withDivider && styles.rowDivider,
-        pressed && onPress && styles.pressed,
-      ]}
+      style={({ pressed }) =>
+        composeActionRowStyle({ pressed, onPress, withDivider })
+      }
     >
       <GlyphBadge
         iconName={iconName}
@@ -104,7 +130,10 @@ export const ActionListRow = ({
         backgroundColor={backgroundColor}
       />
 
-      <MyText style={[styles.rowTitle, { color: color }]} numberOfLines={1}>
+      <MyText
+        style={StyleSheet.compose(styles.rowTitle, { color: color })}
+        numberOfLines={1}
+      >
         {title}
       </MyText>
       {showChevron ? <RoundChevron /> : null}
@@ -158,7 +187,10 @@ export const ConfirmationDialog = ({
           <TouchableWithoutFeedback>
             <View style={styles.dialog}>
               <View
-                style={[styles.alertIcon, !destructive && styles.successIcon]}
+                style={StyleSheet.compose(
+                  styles.alertIcon,
+                  !destructive && styles.successIcon,
+                )}
               >
                 {destructive ? (
                   <Icon
@@ -180,14 +212,13 @@ export const ConfirmationDialog = ({
                 <Pressable
                   disabled={loading}
                   onPress={onConfirm}
-                  style={({ pressed }) => [
-                    styles.dialogButton,
-                    destructive
-                      ? styles.destructiveButton
-                      : styles.primaryButton,
-                    pressed && styles.pressed,
-                    loading && styles.disabled,
-                  ]}
+                  style={({ pressed }) =>
+                    composeDialogButtonStyle({
+                      pressed,
+                      loading,
+                      destructive,
+                    })
+                  }
                 >
                   {loading ? (
                     <ActivityIndicator color={colors.white} />
@@ -201,11 +232,13 @@ export const ConfirmationDialog = ({
                   <Pressable
                     disabled={loading}
                     onPress={onCancel}
-                    style={({ pressed }) => [
-                      styles.dialogButton,
-                      styles.outlineButton,
-                      pressed && styles.pressed,
-                    ]}
+                    style={({ pressed }) =>
+                      composeDialogButtonStyle({
+                        pressed,
+                        destructive,
+                        outline: true,
+                      })
+                    }
                   >
                     <MyText style={styles.outlineButtonText}>
                       {cancelLabel}
@@ -257,9 +290,16 @@ const SheetAction = ({ label, onPress, danger = false }) => {
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [styles.sheetAction, pressed && styles.pressed]}
+      style={({ pressed }) =>
+        StyleSheet.compose(styles.sheetAction, pressed && styles.pressed)
+      }
     >
-      <MyText style={[styles.sheetActionText, danger && styles.dangerText]}>
+      <MyText
+        style={StyleSheet.compose(
+          styles.sheetActionText,
+          danger && styles.dangerText,
+        )}
+      >
         {label}
       </MyText>
     </Pressable>

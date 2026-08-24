@@ -5,6 +5,7 @@ import { colors } from "../constants/colors";
 import { fontStyles } from "../constants/typography";
 import { IconMap } from "../components/Icons";
 import MyText from "../components/MyText";
+import { ROUTES } from "../navigation/routes";
 const SettingsScreen = ({ navigation }) => {
   return (
     <View style={styles.safe}>
@@ -15,7 +16,7 @@ const SettingsScreen = ({ navigation }) => {
           iconName={IconMap.userPlaceholder}
           iconSize={24}
           outerRadius={40}
-          onPress={() => navigation.navigate("AccountSettings")}
+          onPress={() => navigation.navigate(ROUTES.ACCOUNT_SETTINGS)}
         />
 
         <View style={styles.divider} />

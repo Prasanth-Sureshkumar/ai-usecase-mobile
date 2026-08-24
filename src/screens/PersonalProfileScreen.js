@@ -14,6 +14,7 @@ import { useUser } from "../context/UserContext";
 import LoadingIndicator from "../components/LoadingIndicator";
 import MyText from "../components/MyText";
 import { calculateProfileCompletion, getDisplayName } from "../utils/profile";
+import { ROUTES } from "../navigation/routes";
 
 const PLACEHOLDER_PROFILE_IMAGE = require("../assets/images/placeholder.png");
 const PersonalProfileScreen = ({ navigation }) => {
@@ -35,7 +36,7 @@ const PersonalProfileScreen = ({ navigation }) => {
     setLogoutVisible(false);
     navigation.reset({
       index: 0,
-      routes: [{ name: "PreLogin" }],
+      routes: [{ name: ROUTES.PRE_LOGIN }],
     });
   };
   const closePhotoSheet = () => {
@@ -61,7 +62,7 @@ const PersonalProfileScreen = ({ navigation }) => {
           <MyText
             style={styles.editLink}
             onPress={() =>
-              navigation.navigate("ProfileInfo", {
+              navigation.navigate(ROUTES.PROFILE_INFO, {
                 title: getDisplayName(user),
               })
             }
@@ -70,7 +71,11 @@ const PersonalProfileScreen = ({ navigation }) => {
             Edit Profile
           </MyText>
           <View style={styles.progressTrack}>
-            <View style={[styles.progressFill, { width: `${completion}%` }]} />
+            <View
+              style={StyleSheet.compose(styles.progressFill, {
+                width: `${completion}%`,
+              })}
+            />
           </View>
           <View style={styles.progressLabels}>
             <MyText style={styles.progressText}>Complete your profile</MyText>
@@ -87,7 +92,7 @@ const PersonalProfileScreen = ({ navigation }) => {
         iconSize={20}
         outerRadius={20}
         backgroundColor={"transparent"}
-        onPress={() => navigation.navigate("Settings")}
+        onPress={() => navigation.navigate(ROUTES.SETTINGS)}
       />
 
       <ActionListRow

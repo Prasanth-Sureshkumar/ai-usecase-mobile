@@ -69,13 +69,17 @@ const BottomNavigationItem = ({ active, item, onPress }) => {
 
   return (
     <Pressable onPress={onPress} style={styles.tabItem}>
-      <Animated.View style={[styles.tabContent, animatedStyle]}>
+      <Animated.View
+        style={StyleSheet.compose(styles.tabContent, animatedStyle)}
+      >
         <Icon
           name={item.icon}
           size={28}
           color={active ? colors.primary500 : colors.neutrals900}
         />
-        <MyText style={[styles.label, active && styles.activeLabel]}>
+        <MyText
+          style={StyleSheet.compose(styles.label, active && styles.activeLabel)}
+        >
           {item.name}
         </MyText>
       </Animated.View>
@@ -117,7 +121,9 @@ const BottomNavigation = ({ items, selectedId, onSelect }) => {
       onLayout={event => setBarWidth(event.nativeEvent.layout.width)}
     >
       {tabWidth ? (
-        <Animated.View style={[styles.activeIndicatorSlot, indicatorStyle]}>
+        <Animated.View
+          style={StyleSheet.compose(styles.activeIndicatorSlot, indicatorStyle)}
+        >
           <View style={styles.activeLine} />
         </Animated.View>
       ) : null}

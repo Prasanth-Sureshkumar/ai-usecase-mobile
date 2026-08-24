@@ -3,6 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { ActionListRow } from "../components/SharedUIComponents";
 import { colors } from "../constants/colors";
 import { IconMap } from "../components/Icons";
+import { ROUTES } from "../navigation/routes";
 const AccountSettingsScreen = ({ navigation }) => {
   return (
     <View style={styles.safe}>
@@ -11,7 +12,7 @@ const AccountSettingsScreen = ({ navigation }) => {
         iconName={IconMap.lock}
         iconSize={24}
         outerRadius={40}
-        onPress={() => navigation.navigate("ChangePassword")}
+        onPress={() => navigation.navigate(ROUTES.CHANGE_PASSWORD)}
       />
 
       <ActionListRow
@@ -19,7 +20,7 @@ const AccountSettingsScreen = ({ navigation }) => {
         iconName={IconMap.userRemove}
         iconSize={24}
         outerRadius={40}
-        onPress={() => navigation.navigate("DeactivateAccount")}
+        onPress={() => navigation.navigate(ROUTES.DEACTIVATE_ACCOUNT)}
       />
     </View>
   );

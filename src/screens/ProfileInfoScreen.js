@@ -16,6 +16,7 @@ import { useUser } from "../context/UserContext";
 import LoadingIndicator from "../components/LoadingIndicator";
 import { getDisplayDate, getDisplayName } from "../utils/profile";
 import MyText from "../components/MyText";
+import { ROUTES } from "../navigation/routes";
 
 const PLACEHOLDER_PROFILE_IMAGE = require("../assets/images/placeholder.png");
 const ProfileInfoScreen = ({ navigation }) => {
@@ -35,7 +36,7 @@ const ProfileInfoScreen = ({ navigation }) => {
     setLogoutVisible(false);
     navigation.reset({
       index: 0,
-      routes: [{ name: "PreLogin" }],
+      routes: [{ name: ROUTES.PRE_LOGIN }],
     });
   };
   const closePhotoSheet = () => {
@@ -75,7 +76,7 @@ const ProfileInfoScreen = ({ navigation }) => {
             <MyText style={styles.sectionTitle}>Personal Info</MyText>
             <MyText
               style={styles.editText}
-              onPress={() => navigation.navigate("EditPersonalInfo")}
+              onPress={() => navigation.navigate(ROUTES.EDIT_PERSONAL_INFO)}
             >
               Edit
             </MyText>
@@ -112,7 +113,7 @@ const ProfileInfoScreen = ({ navigation }) => {
             iconName={IconMap.userPlaceholder}
             iconSize={24}
             outerRadius={40}
-            onPress={() => navigation.navigate("AccountSettings")}
+            onPress={() => navigation.navigate(ROUTES.ACCOUNT_SETTINGS)}
           />
 
           <ActionListRow

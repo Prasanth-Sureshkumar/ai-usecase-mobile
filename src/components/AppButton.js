@@ -5,6 +5,19 @@ import { screen } from "../constants/spacing";
 import { weights } from "../constants/typography";
 import Icon, { IconMap } from "./Icons";
 import MyText from "./MyText";
+
+const composeButtonStyle = ({ pressed, disabled, loading, style }) =>
+  StyleSheet.compose(
+    StyleSheet.compose(
+      StyleSheet.compose(
+        styles.button,
+        (disabled || loading) && styles.disabled,
+      ),
+      pressed && !disabled && !loading && styles.pressed,
+    ),
+    style,
+  );
+
 const AppButton = ({
   label,
   onPress,
@@ -17,12 +30,9 @@ const AppButton = ({
     <Pressable
       disabled={disabled || loading}
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.button,
-        (disabled || loading) && styles.disabled,
-        pressed && !disabled && !loading && styles.pressed,
-        style,
-      ]}
+      style={({ pressed }) =>
+        composeButtonStyle({ pressed, disabled, loading, style })
+      }
     >
       {loading ? (
         <ActivityIndicator color={colors.white} />

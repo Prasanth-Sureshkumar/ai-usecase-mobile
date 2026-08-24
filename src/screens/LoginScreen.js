@@ -13,10 +13,9 @@ import { login } from "../services/auth";
 import { validateEmail, validateRequired } from "../utils/validation";
 import { POST_AUTH_LOGO_URL } from "../constants/branding";
 import MyText from "../components/MyText";
+import { ROUTES } from "../navigation/routes";
 const LoginScreen = ({ navigation, route }) => {
-  const [email, setEmail] = useState(
-    route?.params?.email || "regentsschool@gmail.com",
-  );
+  const [email, setEmail] = useState(route?.params?.email || " ");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
@@ -44,7 +43,7 @@ const LoginScreen = ({ navigation, route }) => {
         return;
       }
       setState(REQUEST_STATES.SUCCESS);
-      navigation.replace("PostAuthSplash", {
+      navigation.replace(ROUTES.POST_AUTH_SPLASH, {
         logoUrl: POST_AUTH_LOGO_URL,
       });
     } catch (error) {
@@ -103,7 +102,7 @@ const LoginScreen = ({ navigation, route }) => {
         New User Login?{" "}
         <MyText
           style={styles.link}
-          onPress={() => navigation.navigate("PreLogin", { email })}
+          onPress={() => navigation.navigate(ROUTES.PRE_LOGIN, { email })}
         >
           Click here
         </MyText>

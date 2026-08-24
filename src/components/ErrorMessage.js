@@ -7,7 +7,9 @@ import MyText from "./MyText";
 const ErrorMessage = ({ message, detail, compact = false }) => {
   if (!message) return null;
   return (
-    <View style={[styles.errorBox, compact && styles.compactBox]}>
+    <View
+      style={StyleSheet.compose(styles.errorBox, compact && styles.compactBox)}
+    >
       <Icon
         name={IconMap.alert}
         color={colors.red700}

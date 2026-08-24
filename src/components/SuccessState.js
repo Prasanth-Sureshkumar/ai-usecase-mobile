@@ -19,14 +19,11 @@ const SuccessState = ({ title, message }) => {
   return (
     <View style={styles.wrap}>
       <View
-        style={[
-          styles.dotField,
-          {
-            width: fieldSize,
-            height: fieldSize,
-            borderRadius: fieldSize / 2,
-          },
-        ]}
+        style={StyleSheet.compose(styles.dotField, {
+          width: fieldSize,
+          height: fieldSize,
+          borderRadius: fieldSize / 2,
+        })}
       >
         {dots.map((_, index) => {
           const col = index % columns;
@@ -53,18 +50,15 @@ const SuccessState = ({ title, message }) => {
           return (
             <View
               key={index}
-              style={[
-                styles.dot,
-                {
-                  left: x - dotSize / 2,
-                  top: y - dotSize / 2,
-                  width: dotSize,
-                  height: dotSize,
-                  borderRadius: dotSize / 2,
-                  backgroundColor: colors.neutrals300,
-                  opacity,
-                },
-              ]}
+              style={StyleSheet.compose(styles.dot, {
+                left: x - dotSize / 2,
+                top: y - dotSize / 2,
+                width: dotSize,
+                height: dotSize,
+                borderRadius: dotSize / 2,
+                backgroundColor: colors.neutrals300,
+                opacity,
+              })}
             />
           );
         })}

@@ -32,6 +32,9 @@ export const IconMap = {
   userRemove: 0xe80e,
   caution: 0xe815,
   cake: 0xe816,
+  web: 0xe819,
+  location: 0xe817,
+  doorExit: 0xe818,
 };
 export const getIconGlyph = name => {
   const codepoint = typeof name === "number" ? name : IconMap[name];
@@ -47,15 +50,14 @@ const Icon = ({ name, color = colors.navy, size = 28, style }) => {
   return (
     <MyText
       allowFontScaling={false}
-      style={[
-        styles.icon,
-        {
+      style={StyleSheet.compose(
+        StyleSheet.compose(styles.icon, {
           color,
           fontSize: size,
           lineHeight: size,
-        },
+        }),
         style,
-      ]}
+      )}
     >
       {glyph}
     </MyText>

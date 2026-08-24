@@ -6,6 +6,13 @@ import { fontStyles } from "../constants/typography";
 import { useKeyboardAwareScroll } from "./KeyboardAwareScrollScreen";
 import Icon, { IconMap } from "./Icons";
 import MyText from "./MyText";
+
+const composeShellStyle = ({ editable, error }) =>
+  StyleSheet.compose(
+    StyleSheet.compose(styles.inputShell, !editable && styles.disabledShell),
+    error && styles.errorShell,
+  );
+
 const AppInput = ({
   label,
   value,
@@ -30,13 +37,7 @@ const AppInput = ({
   return (
     <View style={styles.wrap}>
       {label ? <MyText style={styles.label}>{label}</MyText> : null}
-      <View
-        style={[
-          styles.inputShell,
-          !editable && styles.disabledShell,
-          error && styles.errorShell,
-        ]}
-      >
+      <View style={composeShellStyle({ editable, error })}>
         <TextInput
           value={value}
           onChangeText={onChangeText}

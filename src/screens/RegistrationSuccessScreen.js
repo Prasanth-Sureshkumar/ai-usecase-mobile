@@ -4,10 +4,13 @@ import SuccessState from "../components/SuccessState";
 import { colors } from "../constants/colors";
 import { REGISTER_SUCCESS_DURATION } from "../constants/timing";
 import { POST_AUTH_LOGO_URL } from "../constants/branding";
+import { ROUTES } from "../navigation/routes";
 const RegistrationSuccessScreen = ({ navigation }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.replace("PostAuthSplash", { logoUrl: POST_AUTH_LOGO_URL });
+      navigation.replace(ROUTES.POST_AUTH_SPLASH, {
+        logoUrl: POST_AUTH_LOGO_URL,
+      });
     }, REGISTER_SUCCESS_DURATION);
 
     return () => clearTimeout(timer);

@@ -61,19 +61,23 @@ const DatePickerDialog = ({
             <View style={styles.actions}>
               <Pressable
                 onPress={confirmSelection}
-                style={({ pressed }) => [
-                  styles.primaryAction,
-                  pressed && styles.pressed,
-                ]}
+                style={({ pressed }) =>
+                  StyleSheet.compose(
+                    styles.primaryAction,
+                    pressed && styles.pressed,
+                  )
+                }
               >
                 <MyText style={styles.primaryText}>Done</MyText>
               </Pressable>
               <Pressable
                 onPress={onCancel}
-                style={({ pressed }) => [
-                  styles.secondaryAction,
-                  pressed && styles.pressed,
-                ]}
+                style={({ pressed }) =>
+                  StyleSheet.compose(
+                    styles.secondaryAction,
+                    pressed && styles.pressed,
+                  )
+                }
               >
                 <MyText style={styles.secondaryText}>Cancel</MyText>
               </Pressable>

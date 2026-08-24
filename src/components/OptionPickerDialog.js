@@ -24,10 +24,9 @@ const OptionPickerDialog = ({
             <Pressable
               key={option.value}
               onPress={() => onSelect(option.value)}
-              style={({ pressed }) => [
-                styles.optionRow,
-                pressed && styles.pressed,
-              ]}
+              style={({ pressed }) =>
+                StyleSheet.compose(styles.optionRow, pressed && styles.pressed)
+              }
             >
               <MyText style={styles.optionText}>{option.label}</MyText>
             </Pressable>

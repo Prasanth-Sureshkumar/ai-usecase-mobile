@@ -4,7 +4,7 @@ import { colors } from "../constants/colors";
 
 const MyText = ({ children, style, ...props }) => {
   return (
-    <Text {...props} style={[styles.text, style]}>
+    <Text {...props} style={StyleSheet.compose(styles.text, style)}>
       {children}
     </Text>
   );

@@ -4,6 +4,16 @@ import { colors } from "../constants/colors";
 import { screen } from "../constants/spacing";
 import { fontStyles } from "../constants/typography";
 import MyText from "./MyText";
+
+const composeFieldStyle = ({ pressed, editable, error }) =>
+  StyleSheet.compose(
+    StyleSheet.compose(
+      StyleSheet.compose(styles.shell, !editable && styles.disabledShell),
+      error && styles.errorShell,
+    ),
+    pressed && editable && styles.pressed,
+  );
+
 const SelectField = ({
   label,
   value,
@@ -18,14 +28,14 @@ const SelectField = ({
       <Pressable
         disabled={!editable}
         onPress={onPress}
-        style={({ pressed }) => [
-          styles.shell,
-          !editable && styles.disabledShell,
-          error && styles.errorShell,
-          pressed && editable && styles.pressed,
-        ]}
+        style={({ pressed }) => composeFieldStyle({ pressed, editable, error })}
       >
-        <MyText style={[styles.text, !value && styles.placeholderText]}>
+        <MyText
+          style={StyleSheet.compose(
+            styles.text,
+            !value && styles.placeholderText,
+          )}
+        >
           {value || placeholder}
         </MyText>
       </Pressable>

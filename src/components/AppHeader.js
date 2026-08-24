@@ -6,6 +6,7 @@ import { fontStyles, weights } from "../constants/typography";
 import Icon, { IconMap } from "./Icons";
 import { useUser } from "../context/UserContext";
 import MyText from "./MyText";
+import { ROUTES } from "../navigation/routes";
 
 const PLACEHOLDER_PROFILE_IMAGE = require("../assets/images/placeholder.png");
 
@@ -28,7 +29,13 @@ export const BackHeader = ({
 
   return (
     <View
-      style={[styles.backHeader, arrowOnly && styles.arrowOnlyHeader, style]}
+      style={StyleSheet.compose(
+        StyleSheet.compose(
+          styles.backHeader,
+          arrowOnly && styles.arrowOnlyHeader,
+        ),
+        style,
+      )}
       testID={testID}
     >
       <Pressable
@@ -46,7 +53,10 @@ export const BackHeader = ({
       {arrowOnly ? null : (
         <MyText
           numberOfLines={1}
-          style={[styles.backTitle, !isTitleBold && styles.regularTitle]}
+          style={StyleSheet.compose(
+            styles.backTitle,
+            !isTitleBold && styles.regularTitle,
+          )}
         >
           {title}
         </MyText>
@@ -56,10 +66,10 @@ export const BackHeader = ({
           disabled={actionInProgress}
           hitSlop={12}
           onPress={actionHandler}
-          style={[
+          style={StyleSheet.compose(
             styles.actionButton,
             actionInProgress && styles.disabledAction,
-          ]}
+          )}
           testID={testID ? `${testID}-action` : undefined}
         >
           <MyText style={styles.actionText}>{actionText}</MyText>
@@ -78,10 +88,10 @@ export const MainHeader = ({ logoUrl = MAIN_HEADER_LOGO_URL }) => {
   const openProfile = () => {
     const parentNavigation = navigation.getParent?.();
     if (parentNavigation) {
-      parentNavigation.navigate("PersonalProfile");
+      parentNavigation.navigate(ROUTES.PERSONAL_PROFILE);
       return;
     }
-    navigation.navigate("PersonalProfile");
+    navigation.navigate(ROUTES.PERSONAL_PROFILE);
   };
 
   return (
@@ -97,7 +107,9 @@ export const MainHeader = ({ logoUrl = MAIN_HEADER_LOGO_URL }) => {
       <Pressable
         onPress={openProfile}
         hitSlop={10}
-        style={({ pressed }) => [styles.profileWrap, pressed && styles.pressed]}
+        style={({ pressed }) =>
+          StyleSheet.compose(styles.profileWrap, pressed && styles.pressed)
+        }
       >
         <Image source={profileImage} style={styles.avatar} />
         {/* <View style={styles.badge}>

@@ -12,28 +12,32 @@ const AppLogo = ({
 }) => {
   if (variant === "crest") {
     return (
-      <View style={[styles.crestWrap, style]}>
+      <View style={StyleSheet.compose(styles.crestWrap, style)}>
         <Image source={{ uri: logoUrl }} style={styles.crestImage} />
       </View>
     );
   }
 
   return (
-    <View style={[styles.logoWrap, style]}>
+    <View style={StyleSheet.compose(styles.logoWrap, style)}>
       <View
-        style={[
-          styles.logoShadow,
-          { width: size, height: size, borderRadius: size / 2 },
-        ]}
+        style={StyleSheet.compose(styles.logoShadow, {
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+        })}
       />
       <View
-        style={[
-          styles.logoCircle,
-          { width: size, height: size, borderRadius: size / 2 },
-        ]}
+        style={StyleSheet.compose(styles.logoCircle, {
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+        })}
       >
         <MyText
-          style={[styles.logoText, { fontSize: Math.round(size * 0.34) }]}
+          style={StyleSheet.compose(styles.logoText, {
+            fontSize: Math.round(size * 0.34),
+          })}
         >
           logo
         </MyText>

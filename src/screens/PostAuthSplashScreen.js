@@ -5,6 +5,7 @@ import { colors } from "../constants/colors";
 import { POST_AUTH_SPLASH_DURATION } from "../constants/timing";
 import { clearAuthSession } from "../api/tokenStorage";
 import { useUser } from "../context/UserContext";
+import { ROUTES } from "../navigation/routes";
 const PostAuthSplashScreen = ({ navigation, route }) => {
   const { refreshUser } = useUser();
 
@@ -22,14 +23,14 @@ const PostAuthSplashScreen = ({ navigation, route }) => {
         await clearAuthSession();
         navigation.reset({
           index: 0,
-          routes: [{ name: "PreLogin" }],
+          routes: [{ name: ROUTES.PRE_LOGIN }],
         });
         return;
       }
 
       navigation.reset({
         index: 0,
-        routes: [{ name: "MainApp" }],
+        routes: [{ name: ROUTES.MAIN_APP }],
       });
     };
 

@@ -5,6 +5,7 @@ import { fontStyles } from "../constants/typography";
 import Icon from "../components/Icons";
 import { useNavigation } from "@react-navigation/native";
 import MyText from "../components/MyText";
+import { ROUTES } from "../navigation/routes";
 
 const moreItems = [
   {
@@ -12,31 +13,36 @@ const moreItems = [
     title: "Admin Panel",
     imageUrl:
       "https://pub-d423d28126b8427881b12df516c6520a.r2.dev/adminpanel.png",
-    url: "https://www.youtube.com",
-    openInBrowser: true,
-    active: true,
+    navigateTo: ROUTES.IN_APP_BROWSER,
+    params: {
+      title: "Admin Panel",
+      url: "https://www.youtube.com",
+      active: true,
+    },
   },
   {
     id: "about",
     title: "About Regent",
     imageUrl: "https://pub-d423d28126b8427881b12df516c6520a.r2.dev/about.png",
+    navigateTo: ROUTES.ORGANIZATION_ABOUT,
   },
   {
     id: "terms",
     title: "Terms & Condition",
     imageUrl: "https://pub-d423d28126b8427881b12df516c6520a.r2.dev/Terms.png",
-    url: "https://www.youtube.com",
-    openInBrowser: true,
-    active: true,
+    navigateTo: ROUTES.IN_APP_BROWSER,
+    params: {
+      title: "Terms & Condition",
+      url: "https://www.youtube.com",
+      active: true,
+    },
   },
 ];
 const MoreScreen = () => {
   const navigation = useNavigation();
   const handleMoreItemPress = item => {
-    if (!item) return;
-    if (item.openInBrowser) {
-      navigation.navigate("InAppBrowser", item);
-    }
+    if (!item?.navigateTo || item.disabled) return;
+    navigation.navigate(item.navigateTo, item.params);
   };
 
   return (
@@ -47,7 +53,16 @@ const MoreScreen = () => {
             <Pressable
               key={item.id}
               onPress={() => handleMoreItemPress(item)}
-              style={({ pressed }) => [styles.card, pressed && styles.pressed]}
+              disabled={item.disabled}
+              style={({ pressed }) =>
+                StyleSheet.compose(
+                  StyleSheet.compose(
+                    styles.card,
+                    item.disabled && styles.disabledCard,
+                  ),
+                  pressed && !item.disabled && styles.pressed,
+                )
+              }
             >
               {item.icon ? (
                 <Icon name={item.icon} size={30} color={item.color} />
@@ -57,7 +72,14 @@ const MoreScreen = () => {
                   style={styles.iconStyle}
                 />
               )}
-              <MyText style={styles.cardText}>{item.title}</MyText>
+              <MyText
+                style={StyleSheet.compose(
+                  styles.cardText,
+                  item.disabled && styles.disabledText,
+                )}
+              >
+                {item.title}
+              </MyText>
             </Pressable>
           );
         })}
@@ -89,6 +111,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  disabledCard: {
+    opacity: 0.45,
+  },
   pressed: {
     opacity: 0.8,
   },
@@ -96,6 +121,9 @@ const styles = StyleSheet.create({
     color: colors.neutrals900,
     ...fontStyles.smRegular,
     textAlign: "center",
+  },
+  disabledText: {
+    color: colors.neutrals500,
   },
   iconStyle: {
     width: 50,

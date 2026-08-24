@@ -10,6 +10,7 @@ import { deactivateAccount } from "../services/user";
 import { IconMap } from "../components/Icons";
 import { useUser } from "../context/UserContext";
 import MyText from "../components/MyText";
+import { ROUTES } from "../navigation/routes";
 const DeactivateAccountScreen = ({ navigation }) => {
   const { setUser } = useUser();
   const [confirmVisible, setConfirmVisible] = useState(false);
@@ -22,7 +23,7 @@ const DeactivateAccountScreen = ({ navigation }) => {
     setConfirmVisible(false);
     navigation.reset({
       index: 0,
-      routes: [{ name: "PreLogin" }],
+      routes: [{ name: ROUTES.PRE_LOGIN }],
     });
   };
 
@@ -53,20 +54,21 @@ const DeactivateAccountScreen = ({ navigation }) => {
           <Pressable
             disabled={submitting}
             onPress={() => setConfirmVisible(true)}
-            style={({ pressed }) => [
-              styles.continueButton,
-              pressed && styles.pressed,
-            ]}
+            style={({ pressed }) =>
+              StyleSheet.compose(
+                styles.continueButton,
+                pressed && styles.pressed,
+              )
+            }
           >
             <MyText style={styles.continueText}>Continue</MyText>
           </Pressable>
           <Pressable
             disabled={submitting}
             onPress={() => navigation.goBack()}
-            style={({ pressed }) => [
-              styles.cancelButton,
-              pressed && styles.pressed,
-            ]}
+            style={({ pressed }) =>
+              StyleSheet.compose(styles.cancelButton, pressed && styles.pressed)
+            }
           >
             <MyText style={styles.cancelText}>Cancel</MyText>
           </Pressable>

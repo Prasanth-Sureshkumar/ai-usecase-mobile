@@ -18,7 +18,9 @@ import SettingsScreen from "../screens/SettingsScreen";
 import AccountSettingsScreen from "../screens/AccountSettingsScreen";
 import ChangePasswordScreen from "../screens/ChangePasswordScreen";
 import DeactivateAccountScreen from "../screens/DeactivateAccountScreen";
+import OrgnizationAbout from "../screens/OrgnizationAbout";
 import { UserProvider } from "../context/UserContext";
+import { ROUTES } from "./routes";
 
 const Stack = createNativeStackNavigator();
 const resolveOptionValue = (value, params) => {
@@ -89,12 +91,15 @@ const RootNavigator = () => {
     <UserProvider>
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="InitialSplash"
+          initialRouteName={ROUTES.INITIAL_SPLASH}
           screenOptions={{ headerShown: false }}
         >
-          <Stack.Screen name="InitialSplash" component={InitialSplashScreen} />
           <Stack.Screen
-            name="PreLogin"
+            name={ROUTES.INITIAL_SPLASH}
+            component={InitialSplashScreen}
+          />
+          <Stack.Screen
+            name={ROUTES.PRE_LOGIN}
             component={PreLoginScreen}
             options={props =>
               props.route.params?.showHeader
@@ -104,7 +109,7 @@ const RootNavigator = () => {
           />
 
           <Stack.Screen
-            name="Login"
+            name={ROUTES.LOGIN}
             component={LoginScreen}
             options={props =>
               getStackHeaderOptions(props, {
@@ -118,7 +123,7 @@ const RootNavigator = () => {
           />
 
           <Stack.Screen
-            name="Register"
+            name={ROUTES.REGISTER}
             component={RegisterScreen}
             options={props =>
               getStackHeaderOptions(props, { fallbackTitle: "Registration" })
@@ -126,21 +131,21 @@ const RootNavigator = () => {
           />
 
           <Stack.Screen
-            name="RegistrationSuccess"
+            name={ROUTES.REGISTRATION_SUCCESS}
             component={RegistrationSuccessScreen}
           />
           <Stack.Screen
-            name="PostAuthSplash"
+            name={ROUTES.POST_AUTH_SPLASH}
             component={PostAuthSplashScreen}
           />
           <Stack.Screen
-            name="MainApp"
+            name={ROUTES.MAIN_APP}
             component={MainAppScreen}
             options={() => getHiddenHeaderOptions()}
           />
 
           <Stack.Screen
-            name="InAppBrowser"
+            name={ROUTES.IN_APP_BROWSER}
             component={DynamicWebViewScreen}
             options={props =>
               getStackHeaderOptions(props, { fallbackTitle: "Webview" })
@@ -148,7 +153,7 @@ const RootNavigator = () => {
           />
 
           <Stack.Screen
-            name="PersonalProfile"
+            name={ROUTES.PERSONAL_PROFILE}
             component={PersonalProfileScreen}
             options={props =>
               getStackHeaderOptions(props, {
@@ -158,7 +163,7 @@ const RootNavigator = () => {
           />
 
           <Stack.Screen
-            name="ProfileInfo"
+            name={ROUTES.PROFILE_INFO}
             component={ProfileInfoScreen}
             options={props =>
               getStackHeaderOptions(props, { fallbackTitle: "Personal Info" })
@@ -166,7 +171,7 @@ const RootNavigator = () => {
           />
 
           <Stack.Screen
-            name="EditPersonalInfo"
+            name={ROUTES.EDIT_PERSONAL_INFO}
             component={EditPersonalInfoScreen}
             options={props =>
               getStackHeaderOptions(props, {
@@ -176,7 +181,7 @@ const RootNavigator = () => {
           />
 
           <Stack.Screen
-            name="Settings"
+            name={ROUTES.SETTINGS}
             component={SettingsScreen}
             options={props =>
               getStackHeaderOptions(props, { fallbackTitle: "Settings" })
@@ -184,7 +189,7 @@ const RootNavigator = () => {
           />
 
           <Stack.Screen
-            name="AccountSettings"
+            name={ROUTES.ACCOUNT_SETTINGS}
             component={AccountSettingsScreen}
             options={props =>
               getStackHeaderOptions(props, {
@@ -194,7 +199,7 @@ const RootNavigator = () => {
           />
 
           <Stack.Screen
-            name="ChangePassword"
+            name={ROUTES.CHANGE_PASSWORD}
             component={ChangePasswordScreen}
             options={props =>
               getStackHeaderOptions(props, { fallbackTitle: "Change Password" })
@@ -202,11 +207,21 @@ const RootNavigator = () => {
           />
 
           <Stack.Screen
-            name="DeactivateAccount"
+            name={ROUTES.DEACTIVATE_ACCOUNT}
             component={DeactivateAccountScreen}
             options={props =>
               getStackHeaderOptions(props, {
                 fallbackTitle: "Deactivate Account",
+              })
+            }
+          />
+
+          <Stack.Screen
+            name={ROUTES.ORGANIZATION_ABOUT}
+            component={OrgnizationAbout}
+            options={props =>
+              getStackHeaderOptions(props, {
+                fallbackTitle: "About Regent",
               })
             }
           />

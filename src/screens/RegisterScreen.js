@@ -17,6 +17,7 @@ import {
 } from "../utils/validation";
 import Icon, { IconMap } from "../components/Icons";
 import MyText from "../components/MyText";
+import { ROUTES } from "../navigation/routes";
 const RegisterScreen = ({ navigation, route }) => {
   const [form, setForm] = useState({
     firstName: "",
@@ -73,7 +74,7 @@ const RegisterScreen = ({ navigation, route }) => {
         return;
       }
       setState(REQUEST_STATES.SUCCESS);
-      navigation.replace("RegistrationSuccess");
+      navigation.replace(ROUTES.REGISTRATION_SUCCESS);
     } catch (error) {
       setState(REQUEST_STATES.ERROR);
       setApiError("Unable to create account. Please try again.");
@@ -144,7 +145,12 @@ const RegisterScreen = ({ navigation, route }) => {
           onPress={() => setAccepted(value => !value)}
           style={styles.termsRow}
         >
-          <View style={[styles.checkbox, accepted && styles.checkboxActive]}>
+          <View
+            style={StyleSheet.compose(
+              styles.checkbox,
+              accepted && styles.checkboxActive,
+            )}
+          >
             {accepted ? (
               <Icon size={15} name={IconMap.check} color={colors.white} />
             ) : null}
