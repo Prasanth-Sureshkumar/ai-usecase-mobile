@@ -1,4 +1,10 @@
-import React, { createContext, useCallback, useContext, useMemo, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 import { getCurrentUserProfile } from "../services/user";
 
 const UserContext = createContext({
@@ -6,10 +12,9 @@ const UserContext = createContext({
   setUser: () => {},
   refreshUser: async () => ({ success: false }),
   loading: false,
-  error: ""
+  error: "",
 });
-
-export function UserProvider({ children }) {
+export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -30,21 +35,19 @@ export function UserProvider({ children }) {
     return response;
   }, []);
 
-  const value = useMemo(() => ({
-    user,
-    setUser,
-    refreshUser,
-    loading,
-    error
-  }), [error, loading, refreshUser, user]);
-
-  return (
-    <UserContext.Provider value={value}>
-      {children}
-    </UserContext.Provider>
+  const value = useMemo(
+    () => ({
+      user,
+      setUser,
+      refreshUser,
+      loading,
+      error,
+    }),
+    [error, loading, refreshUser, user],
   );
-}
 
-export function useUser() {
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+};
+export const useUser = () => {
   return useContext(UserContext);
-}
+};

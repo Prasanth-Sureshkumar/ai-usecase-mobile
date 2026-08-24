@@ -3,8 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { ActionListRow } from "../components/SharedUIComponents";
 import { colors } from "../constants/colors";
 import { IconMap } from "../components/Icons";
-
-export default function AccountSettingsScreen({ navigation }) {
+const AccountSettingsScreen = ({ navigation }) => {
   return (
     <View style={styles.safe}>
       <ActionListRow
@@ -14,6 +13,7 @@ export default function AccountSettingsScreen({ navigation }) {
         outerRadius={40}
         onPress={() => navigation.navigate("ChangePassword")}
       />
+
       <ActionListRow
         title="Deactivate or Delete Account"
         iconName={IconMap.userRemove}
@@ -23,12 +23,13 @@ export default function AccountSettingsScreen({ navigation }) {
       />
     </View>
   );
-}
+};
+export default AccountSettingsScreen;
 
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
     backgroundColor: colors.white,
-    padding: 14
-  }
+    padding: 14,
+  },
 });

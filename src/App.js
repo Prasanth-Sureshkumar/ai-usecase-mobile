@@ -3,8 +3,7 @@ import { StatusBar, StyleSheet } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import RootNavigator from "./navigation/RootNavigator";
 import { colors } from "./constants/colors";
-
-export default function App() {
+const App = () => {
   return (
     <SafeAreaProvider>
       <StatusBar barStyle="dark-content" backgroundColor={colors.white} />
@@ -13,11 +12,12 @@ export default function App() {
       </SafeAreaView>
     </SafeAreaProvider>
   );
-}
+};
+export default App;
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.white
-  }
+    backgroundColor: colors.white,
+  },
 });

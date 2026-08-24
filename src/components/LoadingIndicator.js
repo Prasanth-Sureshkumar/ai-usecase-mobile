@@ -1,15 +1,16 @@
 import React from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { colors } from "../constants/colors";
-
-export default function LoadingIndicator({ label = "Loading..." }) {
+import MyText from "./MyText";
+const LoadingIndicator = ({ label = "Loading..." }) => {
   return (
     <View style={styles.wrap}>
       <ActivityIndicator color={colors.primary500} />
-      <Text style={styles.text}>{label}</Text>
+      <MyText style={styles.text}>{label}</MyText>
     </View>
   );
-}
+};
+export default LoadingIndicator;
 
 const styles = StyleSheet.create({
   wrap: {
@@ -17,10 +18,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 12,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
   text: {
     color: colors.muted,
-    fontSize: 15
-  }
+    fontSize: 15,
+  },
 });

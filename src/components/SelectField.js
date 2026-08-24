@@ -1,13 +1,20 @@
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { colors } from "../constants/colors";
 import { screen } from "../constants/spacing";
 import { fontStyles } from "../constants/typography";
-
-export default function SelectField({ label, value, placeholder, editable = true, onPress, error }) {
+import MyText from "./MyText";
+const SelectField = ({
+  label,
+  value,
+  placeholder,
+  editable = true,
+  onPress,
+  error,
+}) => {
   return (
     <View style={styles.wrap}>
-      {label ? <Text style={styles.label}>{label}</Text> : null}
+      {label ? <MyText style={styles.label}>{label}</MyText> : null}
       <Pressable
         disabled={!editable}
         onPress={onPress}
@@ -15,25 +22,26 @@ export default function SelectField({ label, value, placeholder, editable = true
           styles.shell,
           !editable && styles.disabledShell,
           error && styles.errorShell,
-          pressed && editable && styles.pressed
+          pressed && editable && styles.pressed,
         ]}
       >
-        <Text style={[styles.text, !value && styles.placeholderText]}>
+        <MyText style={[styles.text, !value && styles.placeholderText]}>
           {value || placeholder}
-        </Text>
+        </MyText>
       </Pressable>
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+      {error ? <MyText style={styles.error}>{error}</MyText> : null}
     </View>
   );
-}
+};
+export default SelectField;
 
 const styles = StyleSheet.create({
   wrap: {
-    gap: 10
+    gap: 10,
   },
   label: {
     color: colors.neutrals900,
-    ...fontStyles.smBold
+    ...fontStyles.smBold,
   },
   shell: {
     height: screen.fieldHeight,
@@ -42,27 +50,27 @@ const styles = StyleSheet.create({
     borderColor: colors.neutrals300,
     backgroundColor: colors.white,
     paddingHorizontal: 18,
-    justifyContent: "center"
+    justifyContent: "center",
   },
   disabledShell: {
-    backgroundColor: colors.inputDisabled
+    backgroundColor: colors.inputDisabled,
   },
   errorShell: {
-    borderColor: colors.red
+    borderColor: colors.red,
   },
   text: {
     color: colors.text,
-    ...fontStyles.mdRegular
+    ...fontStyles.mdRegular,
   },
   placeholderText: {
-    color: colors.neutrals300
+    color: colors.neutrals300,
   },
   error: {
     color: colors.redText,
     fontSize: 13,
-    marginTop: -4
+    marginTop: -4,
   },
   pressed: {
-    opacity: 0.76
-  }
+    opacity: 0.76,
+  },
 });

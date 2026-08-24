@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import { Modal, Platform, Pressable, StyleSheet, View } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { colors } from "../constants/colors";
 import { fontStyles } from "../constants/typography";
 import { getDateOnlyValue } from "../utils/date";
-
-export default function DatePickerDialog({
+import MyText from "./MyText";
+const DatePickerDialog = ({
   visible,
   title = "Select Date",
   value,
   maximumDate,
   onCancel,
-  onConfirm
-}) {
+  onConfirm,
+}) => {
   const [selectedDate, setSelectedDate] = useState(getDateOnlyValue(value));
 
   useEffect(() => {
@@ -20,8 +20,7 @@ export default function DatePickerDialog({
       setSelectedDate(getDateOnlyValue(value));
     }
   }, [value, visible]);
-
-  function handleChange(event, date) {
+  const handleChange = (event, date) => {
     if (Platform.OS === "android") {
       if (event.type === "set" && date) {
         onConfirm(date);
@@ -34,17 +33,21 @@ export default function DatePickerDialog({
     if (date) {
       setSelectedDate(date);
     }
-  }
-
-  function confirmSelection() {
+  };
+  const confirmSelection = () => {
     onConfirm(selectedDate);
-  }
+  };
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onCancel}
+    >
       <View style={styles.overlay}>
         <View style={styles.card}>
-          <Text style={styles.title}>{title}</Text>
+          <MyText style={styles.title}>{title}</MyText>
           <DateTimePicker
             value={selectedDate}
             mode="date"
@@ -53,13 +56,26 @@ export default function DatePickerDialog({
             onChange={handleChange}
             textColor={colors.neutrals900}
           />
+
           {Platform.OS === "ios" ? (
             <View style={styles.actions}>
-              <Pressable onPress={confirmSelection} style={({ pressed }) => [styles.primaryAction, pressed && styles.pressed]}>
-                <Text style={styles.primaryText}>Done</Text>
+              <Pressable
+                onPress={confirmSelection}
+                style={({ pressed }) => [
+                  styles.primaryAction,
+                  pressed && styles.pressed,
+                ]}
+              >
+                <MyText style={styles.primaryText}>Done</MyText>
               </Pressable>
-              <Pressable onPress={onCancel} style={({ pressed }) => [styles.secondaryAction, pressed && styles.pressed]}>
-                <Text style={styles.secondaryText}>Cancel</Text>
+              <Pressable
+                onPress={onCancel}
+                style={({ pressed }) => [
+                  styles.secondaryAction,
+                  pressed && styles.pressed,
+                ]}
+              >
+                <MyText style={styles.secondaryText}>Cancel</MyText>
               </Pressable>
             </View>
           ) : null}
@@ -67,7 +83,8 @@ export default function DatePickerDialog({
       </View>
     </Modal>
   );
-}
+};
+export default DatePickerDialog;
 
 const styles = StyleSheet.create({
   overlay: {
@@ -75,25 +92,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "rgba(0, 0, 0, 0.32)",
-    paddingHorizontal: 24
+    paddingHorizontal: 24,
   },
   card: {
     width: "100%",
     maxWidth: 380,
     borderRadius: 8,
     backgroundColor: colors.white,
-    padding: 22
+    padding: 22,
   },
   title: {
     color: colors.neutrals900,
     ...fontStyles.lgBold,
     textAlign: "center",
-    marginBottom: 14
+    marginBottom: 14,
   },
   actions: {
     flexDirection: "row",
     gap: 10,
-    marginTop: 16
+    marginTop: 16,
   },
   primaryAction: {
     flex: 1,
@@ -101,7 +118,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.primary500
+    backgroundColor: colors.primary500,
   },
   secondaryAction: {
     flex: 1,
@@ -110,17 +127,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: colors.border
+    borderColor: colors.border,
   },
   primaryText: {
     color: colors.white,
-    ...fontStyles.smRegular
+    ...fontStyles.smRegular,
   },
   secondaryText: {
     color: colors.neutrals900,
-    ...fontStyles.smRegular
+    ...fontStyles.smRegular,
   },
   pressed: {
-    opacity: 0.76
-  }
+    opacity: 0.76,
+  },
 });

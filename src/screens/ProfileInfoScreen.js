@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import {
   Avatar,
   ActionListRow,
   ConfirmationDialog,
   InfoRow,
-  PhotoActionSheet
+  PhotoActionSheet,
 } from "../components/SharedUIComponents";
 import { colors } from "../constants/colors";
 import { fontStyles } from "../constants/typography";
@@ -15,19 +15,19 @@ import { IconMap } from "../components/Icons";
 import { useUser } from "../context/UserContext";
 import LoadingIndicator from "../components/LoadingIndicator";
 import { getDisplayDate, getDisplayName } from "../utils/profile";
+import MyText from "../components/MyText";
 
 const PLACEHOLDER_PROFILE_IMAGE = require("../assets/images/placeholder.png");
-
-export default function ProfileInfoScreen({ navigation }) {
+const ProfileInfoScreen = ({ navigation }) => {
   const { user, setUser, loading } = useUser();
   const [logoutVisible, setLogoutVisible] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [photoSheetVisible, setPhotoSheetVisible] = useState(false);
-  const profileImage = typeof user?.picture === "string" && user.picture
-    ? { uri: user.picture }
-    : PLACEHOLDER_PROFILE_IMAGE;
-
-  async function confirmLogout() {
+  const profileImage =
+    typeof user?.picture === "string" && user.picture
+      ? { uri: user.picture }
+      : PLACEHOLDER_PROFILE_IMAGE;
+  const confirmLogout = async () => {
     setLoggingOut(true);
     await logout();
     setUser(null);
@@ -35,13 +35,12 @@ export default function ProfileInfoScreen({ navigation }) {
     setLogoutVisible(false);
     navigation.reset({
       index: 0,
-      routes: [{ name: "PreLogin" }]
+      routes: [{ name: "PreLogin" }],
     });
-  }
-
-  function closePhotoSheet() {
+  };
+  const closePhotoSheet = () => {
     setPhotoSheetVisible(false);
-  }
+  };
 
   if (loading && !user) {
     return <LoadingIndicator label="Loading profile..." />;
@@ -51,14 +50,10 @@ export default function ProfileInfoScreen({ navigation }) {
     <View style={styles.safe}>
       <ScrollView contentContainerStyle={styles.content}>
         <LinearGradient
-          colors={[
-            "#EBF1FF",
-            "rgba(235, 241, 255, 0)",
-          ]}
+          colors={["#EBF1FF", "rgba(235, 241, 255, 0)"]}
           locations={[0, 1]}
           start={{ x: 0.5, y: 0 }}
-          end={{ x: 0.5, y: 1 }
-          }
+          end={{ x: 0.5, y: 1 }}
         >
           <View style={styles.hero}>
             <Avatar
@@ -68,28 +63,47 @@ export default function ProfileInfoScreen({ navigation }) {
               onPress={() => setPhotoSheetVisible(true)}
             />
           </View>
-
         </LinearGradient>
 
         <View style={styles.identity}>
-          <Text style={styles.name}>{getDisplayName(user)}</Text>
-          <Text style={styles.role}>Role: {"parent"}</Text>
+          <MyText style={styles.name}>{getDisplayName(user)}</MyText>
+          <MyText style={styles.role}>Role: {"parent"}</MyText>
         </View>
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Personal Info</Text>
-            <Text
+            <MyText style={styles.sectionTitle}>Personal Info</MyText>
+            <MyText
               style={styles.editText}
               onPress={() => navigation.navigate("EditPersonalInfo")}
             >
               Edit
-            </Text>
+            </MyText>
           </View>
-          <InfoRow iconName={IconMap.cake} iconSize={24} outerRadius={40} value={getDisplayDate(user?.dateOfBirth) || "-"} />
-          <InfoRow iconName={IconMap.gender} iconSize={24} outerRadius={40} value={user?.gender || "-"} />
-          <InfoRow iconName={IconMap.phone} iconSize={24} outerRadius={40} value={user?.phoneNumber || "-"} />
-          <InfoRow iconName={IconMap.message} iconSize={24} outerRadius={40} value={user?.email || "-"} />
+          <InfoRow
+            iconName={IconMap.cake}
+            iconSize={24}
+            outerRadius={40}
+            value={getDisplayDate(user?.dateOfBirth) || "-"}
+          />
+          <InfoRow
+            iconName={IconMap.gender}
+            iconSize={24}
+            outerRadius={40}
+            value={user?.gender || "-"}
+          />
+          <InfoRow
+            iconName={IconMap.phone}
+            iconSize={24}
+            outerRadius={40}
+            value={user?.phoneNumber || "-"}
+          />
+          <InfoRow
+            iconName={IconMap.message}
+            iconSize={24}
+            outerRadius={40}
+            value={user?.email || "-"}
+          />
         </View>
 
         <View style={styles.menuBlock}>
@@ -100,6 +114,7 @@ export default function ProfileInfoScreen({ navigation }) {
             outerRadius={40}
             onPress={() => navigation.navigate("AccountSettings")}
           />
+
           <ActionListRow
             title="Logout"
             iconName={IconMap.exitIcon}
@@ -121,6 +136,7 @@ export default function ProfileInfoScreen({ navigation }) {
         onRemove={closePhotoSheet}
         onCancel={() => setPhotoSheetVisible(false)}
       />
+
       <ConfirmationDialog
         visible={logoutVisible}
         title="Logout"
@@ -132,15 +148,16 @@ export default function ProfileInfoScreen({ navigation }) {
       />
     </View>
   );
-}
+};
+export default ProfileInfoScreen;
 
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
   content: {
-    paddingBottom: 34
+    paddingBottom: 34,
   },
   hero: {
     paddingTop: 36,
@@ -170,7 +187,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 8
+    marginBottom: 8,
   },
   sectionTitle: {
     color: colors.neutrals900,
@@ -185,5 +202,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderTopWidth: 1,
     borderColor: colors.neutrals100,
-  }
+  },
 });

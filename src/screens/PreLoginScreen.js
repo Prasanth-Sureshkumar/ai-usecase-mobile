@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import AppButton from "../components/AppButton";
 import AppInput from "../components/AppInput";
 import AppLogo from "../components/AppLogo";
@@ -11,15 +11,14 @@ import { fontStyles } from "../constants/typography";
 import { REQUEST_STATES } from "../types/auth";
 import { validateEmail } from "../utils/validation";
 import { validatePreLogin } from "../services/auth";
-
-export default function PreLoginScreen({ navigation, route }) {
+import MyText from "../components/MyText";
+const PreLoginScreen = ({ navigation, route }) => {
   const [email, setEmail] = useState(route?.params?.email || "");
   const [emailError, setEmailError] = useState("");
   const [apiError, setApiError] = useState(null);
   const [state, setState] = useState(REQUEST_STATES.IDLE);
   const showHeader = Boolean(route?.params?.showHeader);
-
-  async function submit() {
+  const submit = async () => {
     const validationError = validateEmail(email);
     setEmailError(validationError);
     setApiError(null);
@@ -36,30 +35,34 @@ export default function PreLoginScreen({ navigation, route }) {
 
       setState(REQUEST_STATES.SUCCESS);
       navigation.navigate(response.userExists ? "Login" : "Register", {
-        email: email.trim().toLowerCase()
+        email: email.trim().toLowerCase(),
       });
     } catch (error) {
       setState(REQUEST_STATES.ERROR);
       setApiError({ message: "Something went wrong. Please try again." });
     }
-  }
-
-  function clearForEdit(value) {
+  };
+  const clearForEdit = value => {
     setEmail(value);
     setEmailError("");
     setApiError(null);
     if (state === REQUEST_STATES.ERROR) setState(REQUEST_STATES.IDLE);
-  }
+  };
 
   return (
     <KeyboardAwareScrollScreen
       style={styles.screen}
-      contentContainerStyle={[styles.content, showHeader && styles.contentWithHeader]}
+      contentContainerStyle={[
+        styles.content,
+        showHeader && styles.contentWithHeader,
+      ]}
     >
       <AppLogo size={showHeader ? 110 : 112} style={styles.logo} />
       <View style={styles.copyBlock}>
-        <Text style={styles.title}>Welcome to{"\n"}App Name</Text>
-        <Text style={styles.subtitle}>Enter your email and access code to continue</Text>
+        <MyText style={styles.title}>Welcome to{"\n"}App Name</MyText>
+        <MyText style={styles.subtitle}>
+          Enter your email and access code to continue
+        </MyText>
       </View>
       <View style={styles.form}>
         <AppInput
@@ -71,9 +74,12 @@ export default function PreLoginScreen({ navigation, route }) {
           rightIcon={showHeader ? "edit" : undefined}
           error={emailError}
         />
+
         {apiError ? <ErrorMessage message={apiError.message} compact /> : null}
       </View>
-      {apiError?.detail ? <Text style={styles.detail}>{apiError.detail}</Text> : null}
+      {apiError?.detail ? (
+        <MyText style={styles.detail}>{apiError.detail}</MyText>
+      ) : null}
       <AppButton
         label={apiError ? "Try Again" : "Continue"}
         icon={!apiError}
@@ -81,33 +87,38 @@ export default function PreLoginScreen({ navigation, route }) {
         loading={state === REQUEST_STATES.LOADING}
         style={styles.button}
       />
+
       {!showHeader && !apiError ? (
-        <Text style={styles.footerText}>
+        <MyText style={styles.footerText}>
           Existing User Login?{" "}
-          <Text style={styles.link} onPress={() => navigation.navigate("Login", { email })}>
+          <MyText
+            style={styles.link}
+            onPress={() => navigation.navigate("Login", { email })}
+          >
             Click here
-          </Text>
-        </Text>
+          </MyText>
+        </MyText>
       ) : null}
     </KeyboardAwareScrollScreen>
   );
-}
+};
+export default PreLoginScreen;
 
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
   content: {
     flexGrow: 1,
     paddingHorizontal: screen.horizontal,
-    justifyContent: "center"
+    justifyContent: "center",
   },
   contentWithHeader: {
-    paddingTop: 66
+    paddingTop: 66,
   },
   logo: {
-    marginBottom: 50
+    marginBottom: 50,
   },
   copyBlock: {
     marginBottom: 25,
@@ -115,17 +126,17 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.neutrals900,
-    ...fontStyles.xxlBold
+    ...fontStyles.xxlBold,
   },
   subtitle: {
     color: colors.neutrals900,
     ...fontStyles.smRegular,
   },
   form: {
-    gap: 25
+    gap: 25,
   },
   button: {
-    marginTop: 25
+    marginTop: 25,
   },
   footerText: {
     color: colors.neutrals900,
@@ -135,13 +146,13 @@ const styles = StyleSheet.create({
   },
   link: {
     color: colors.primary500,
-    textDecorationLine: "underline"
+    textDecorationLine: "underline",
   },
   detail: {
     color: colors.neutrals900,
     textAlign: "center",
     ...fontStyles.smRegular,
     marginTop: 25,
-    marginHorizontal: 8
-  }
+    marginHorizontal: 8,
+  },
 });

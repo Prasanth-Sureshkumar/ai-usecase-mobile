@@ -1,6 +1,6 @@
 export const font = {
   regular: "System",
-  serif: "Times New Roman"
+  serif: "Times New Roman",
 };
 
 export const weights = {
@@ -8,26 +8,26 @@ export const weights = {
   medium: "500",
   semibold: "600",
   bold: "700",
-  heavy: "800"
+  heavy: "800",
 };
 
 export const fontStyles = {
-  xsmRegular:{
+  xsmRegular: {
     fontSize: 12,
     lineHeight: 16,
     fontWeight: weights.regular,
   },
-  xsmBold:{
+  xsmBold: {
     fontSize: 12,
     lineHeight: 16,
     fontWeight: weights.bold,
   },
-  xmRegular:{
+  xmRegular: {
     fontSize: 14,
     lineHeight: 16,
     fontWeight: weights.regular,
   },
-  xmBold:{
+  xmBold: {
     fontSize: 14,
     lineHeight: 16,
     fontWeight: weights.bold,
@@ -40,46 +40,46 @@ export const fontStyles = {
   smBold: {
     fontSize: 16,
     lineHeight: 20,
-    fontWeight: weights.bold
+    fontWeight: weights.bold,
   },
   mdRegular: {
     fontSize: 18,
     lineHeight: 24,
-    fontWeight: weights.regular
+    fontWeight: weights.regular,
   },
   mdBold: {
     fontSize: 18,
     lineHeight: 24,
-    fontWeight: weights.bold
+    fontWeight: weights.bold,
   },
   lgRegular: {
     fontSize: 20,
     lineHeight: 24,
-    fontWeight: weights.regular
+    fontWeight: weights.regular,
   },
   lgBold: {
     fontSize: 20,
     lineHeight: 24,
-    fontWeight: weights.bold
+    fontWeight: weights.bold,
   },
   xlRegular: {
     fontSize: 24,
     lineHeight: 30,
-    fontWeight: weights.regular
+    fontWeight: weights.regular,
   },
   xlBold: {
     fontSize: 24,
     lineHeight: 30,
-    fontWeight: weights.bold
+    fontWeight: weights.bold,
   },
   xxlRegular: {
     fontSize: 28,
     lineHeight: 34,
-    fontWeight: weights.regular
+    fontWeight: weights.regular,
   },
   xxlBold: {
     fontSize: 28,
     lineHeight: 34,
-    fontWeight: weights.bold
+    fontWeight: weights.bold,
   },
-}
+};

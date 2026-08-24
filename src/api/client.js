@@ -7,11 +7,11 @@ export const apiClient = axios.create({
   timeout: 20000,
   headers: {
     "Content-Type": "application/json",
-    Accept: "application/json"
-  }
+    Accept: "application/json",
+  },
 });
 
-apiClient.interceptors.request.use(async (config) => {
+apiClient.interceptors.request.use(async config => {
   const token = await getAuthToken();
 
   if (token) {
@@ -23,7 +23,7 @@ apiClient.interceptors.request.use(async (config) => {
       method: config.method?.toUpperCase(),
       url: `${config.baseURL}${config.url}`,
       params: config.params,
-      data: config.data
+      data: config.data,
     });
   }
 
@@ -31,29 +31,31 @@ apiClient.interceptors.request.use(async (config) => {
 });
 
 apiClient.interceptors.response.use(
-  (response) => {
+  response => {
     if (env.DEVELOPER_QUIRKS) {
       console.log("API Response:", {
         status: response.status,
         url: response.config.url,
-        data: response.data
+        data: response.data,
       });
     }
     return response;
   },
-  (error) => {
+  error => {
     if (env.DEVELOPER_QUIRKS) {
       console.log("API Error:", {
         status: error.response?.status,
         url: error.config?.url,
         data: error.response?.data,
-        message: error.message
+        message: error.message,
       });
     }
     return Promise.reject(error);
   },
 );
-
-export function getApiErrorMessage(error, fallback = "Something went wrong. Please try again.") {
+export const getApiErrorMessage = (
+  error,
+  fallback = "Something went wrong. Please try again.",
+) => {
   return error?.response?.data?.message || error?.message || fallback;
-}
+};

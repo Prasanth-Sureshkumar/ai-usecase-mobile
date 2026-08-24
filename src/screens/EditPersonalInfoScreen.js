@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import AppButton from "../components/AppButton";
 import AppInput from "../components/AppInput";
 import DatePickerDialog from "../components/DatePickerDialog";
@@ -15,13 +15,13 @@ import { useUser } from "../context/UserContext";
 import { updatePersonalInformation } from "../services/user";
 import { formatDateOnly, getDateOnlyValue } from "../utils/date";
 import { getDisplayDate } from "../utils/profile";
+import MyText from "../components/MyText";
 
 const GENDER_OPTIONS = [
   { label: "Male", value: "Male" },
-  { label: "Female", value: "Female" }
+  { label: "Female", value: "Female" },
 ];
-
-export default function EditPersonalInfoScreen({ navigation }) {
+const EditPersonalInfoScreen = ({ navigation }) => {
   const { user, setUser, refreshUser, loading } = useUser();
   const canEditDateOfBirth = !user?.dateOfBirth;
   const canEditGender = !user?.gender;
@@ -29,7 +29,7 @@ export default function EditPersonalInfoScreen({ navigation }) {
     dateOfBirth: "",
     gender: "",
     phoneNumber: "",
-    email: ""
+    email: "",
   });
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
@@ -39,24 +39,24 @@ export default function EditPersonalInfoScreen({ navigation }) {
 
   useEffect(() => {
     setForm({
-      dateOfBirth: user?.dateOfBirth ? formatDateOnly(getDateOnlyValue(user.dateOfBirth, null)) : "",
+      dateOfBirth: user?.dateOfBirth
+        ? formatDateOnly(getDateOnlyValue(user.dateOfBirth, null))
+        : "",
       gender: user?.gender || "",
       phoneNumber: user?.phoneNumber || "",
-      email: user?.email || ""
+      email: user?.email || "",
     });
   }, [user]);
-
-  function updateField(key, value) {
-    setForm((current) => ({ ...current, [key]: value }));
-    setErrors((current) => ({ ...current, [key]: "", form: "" }));
-  }
-
-  async function submit() {
+  const updateField = (key, value) => {
+    setForm(current => ({ ...current, [key]: value }));
+    setErrors(current => ({ ...current, [key]: "", form: "" }));
+  };
+  const submit = async () => {
     if (saving) return;
 
     setErrors({});
     const payload = {
-      phoneNumber: form.phoneNumber.trim() || null
+      phoneNumber: form.phoneNumber.trim() || null,
     };
 
     if (canEditDateOfBirth && form.dateOfBirth) {
@@ -83,19 +83,18 @@ export default function EditPersonalInfoScreen({ navigation }) {
     }
 
     setSuccessVisible(true);
-  }
-
-  function closeSuccess() {
+  };
+  const closeSuccess = () => {
     setSuccessVisible(false);
     navigation.goBack();
-  }
+  };
 
   const getMaximumDateOfBirth = () => {
     const today = new Date();
     return new Date(
       today.getFullYear() - 13,
       today.getMonth(),
-      today.getDate()
+      today.getDate(),
     );
   };
 
@@ -118,6 +117,7 @@ export default function EditPersonalInfoScreen({ navigation }) {
             onPress={() => setDatePickerVisible(true)}
             error={errors.dateOfBirth}
           />
+
           <SelectField
             label="Gender"
             value={form.gender}
@@ -126,14 +126,16 @@ export default function EditPersonalInfoScreen({ navigation }) {
             onPress={() => setGenderPickerVisible(true)}
             error={errors.gender}
           />
+
           <AppInput
             label="Phone"
             placeholder="Enter phone number"
             value={form.phoneNumber}
             keyboardType="phone-pad"
-            onChangeText={(value) => updateField("phoneNumber", value)}
+            onChangeText={value => updateField("phoneNumber", value)}
             error={errors.phoneNumber}
           />
+
           <AppInput
             label="Email"
             placeholder="Enter email address"
@@ -142,7 +144,10 @@ export default function EditPersonalInfoScreen({ navigation }) {
             editable={false}
             error={errors.email}
           />
-          {errors.form ? <Text style={styles.formError}>{errors.form}</Text> : null}
+
+          {errors.form ? (
+            <MyText style={styles.formError}>{errors.form}</MyText>
+          ) : null}
         </View>
         <AppButton
           label="Save"
@@ -159,21 +164,23 @@ export default function EditPersonalInfoScreen({ navigation }) {
         value={form.dateOfBirth}
         maximumDate={getMaximumDateOfBirth()}
         onCancel={() => setDatePickerVisible(false)}
-        onConfirm={(date) => {
+        onConfirm={date => {
           updateField("dateOfBirth", formatDateOnly(date));
           setDatePickerVisible(false);
         }}
       />
+
       <OptionPickerDialog
         visible={genderPickerVisible}
         title="Select Gender"
         options={GENDER_OPTIONS}
         onCancel={() => setGenderPickerVisible(false)}
-        onSelect={(value) => {
+        onSelect={value => {
           updateField("gender", value);
           setGenderPickerVisible(false);
         }}
       />
+
       <ConfirmationDialog
         visible={successVisible}
         title="Saved"
@@ -185,27 +192,28 @@ export default function EditPersonalInfoScreen({ navigation }) {
       />
     </View>
   );
-}
+};
+export default EditPersonalInfoScreen;
 
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
   content: {
     flexGrow: 1,
     paddingHorizontal: screen.horizontal,
     paddingTop: 28,
-    paddingBottom: 34
+    paddingBottom: 34,
   },
   form: {
-    gap: 18
+    gap: 18,
   },
   formError: {
     color: colors.redText,
-    ...fontStyles.smRegular
+    ...fontStyles.smRegular,
   },
   button: {
-    marginTop: 30
-  }
+    marginTop: 30,
+  },
 });

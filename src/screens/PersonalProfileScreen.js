@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import {
   Avatar,
   ActionListRow,
   ConfirmationDialog,
-  PhotoActionSheet
+  PhotoActionSheet,
 } from "../components/SharedUIComponents";
 import { colors } from "../constants/colors";
 import { fontStyles } from "../constants/typography";
@@ -12,25 +12,22 @@ import { logout } from "../services/user";
 import { IconMap } from "../components/Icons";
 import { useUser } from "../context/UserContext";
 import LoadingIndicator from "../components/LoadingIndicator";
-import {
-  calculateProfileCompletion,
-  getDisplayName
-} from "../utils/profile";
+import MyText from "../components/MyText";
+import { calculateProfileCompletion, getDisplayName } from "../utils/profile";
 
 const PLACEHOLDER_PROFILE_IMAGE = require("../assets/images/placeholder.png");
-
-export default function PersonalProfileScreen({ navigation }) {
+const PersonalProfileScreen = ({ navigation }) => {
   const { user, setUser, loading } = useUser();
   const [logoutVisible, setLogoutVisible] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [photoSheetVisible, setPhotoSheetVisible] = useState(false);
 
   const completion = calculateProfileCompletion(user);
-  const profileImage = typeof user?.picture === "string" && user.picture
-    ? { uri: user.picture }
-    : PLACEHOLDER_PROFILE_IMAGE;
-
-  async function confirmLogout() {
+  const profileImage =
+    typeof user?.picture === "string" && user.picture
+      ? { uri: user.picture }
+      : PLACEHOLDER_PROFILE_IMAGE;
+  const confirmLogout = async () => {
     setLoggingOut(true);
     await logout();
     setUser(null);
@@ -38,13 +35,12 @@ export default function PersonalProfileScreen({ navigation }) {
     setLogoutVisible(false);
     navigation.reset({
       index: 0,
-      routes: [{ name: "PreLogin" }]
+      routes: [{ name: "PreLogin" }],
     });
-  }
-
-  function closePhotoSheet() {
+  };
+  const closePhotoSheet = () => {
     setPhotoSheetVisible(false);
-  }
+  };
 
   if (loading && !user) {
     return <LoadingIndicator label="Loading profile..." />;
@@ -57,21 +53,28 @@ export default function PersonalProfileScreen({ navigation }) {
           source={profileImage}
           onPress={() => setPhotoSheetVisible(true)}
         />
+
         <View style={styles.profileCopy}>
-          <Text style={styles.name} numberOfLines={1}>{getDisplayName(user)}</Text>
-          <Text
+          <MyText style={styles.name} numberOfLines={1}>
+            {getDisplayName(user)}
+          </MyText>
+          <MyText
             style={styles.editLink}
-            onPress={() => navigation.navigate("ProfileInfo", { title: getDisplayName(user) })}
+            onPress={() =>
+              navigation.navigate("ProfileInfo", {
+                title: getDisplayName(user),
+              })
+            }
             suppressHighlighting={true}
           >
             Edit Profile
-          </Text>
+          </MyText>
           <View style={styles.progressTrack}>
             <View style={[styles.progressFill, { width: `${completion}%` }]} />
           </View>
           <View style={styles.progressLabels}>
-            <Text style={styles.progressText}>Complete your profile</Text>
-            <Text style={styles.progressText}>{completion}%</Text>
+            <MyText style={styles.progressText}>Complete your profile</MyText>
+            <MyText style={styles.progressText}>{completion}%</MyText>
           </View>
         </View>
       </View>
@@ -83,15 +86,16 @@ export default function PersonalProfileScreen({ navigation }) {
         iconName={IconMap.gear}
         iconSize={20}
         outerRadius={20}
-        backgroundColor={'transparent'}
+        backgroundColor={"transparent"}
         onPress={() => navigation.navigate("Settings")}
       />
+
       <ActionListRow
         title="Logout"
         iconName={IconMap.exitIcon}
         iconSize={20}
         outerRadius={20}
-        backgroundColor={'transparent'}
+        backgroundColor={"transparent"}
         onPress={() => setLogoutVisible(true)}
         color={colors.primary500}
       />
@@ -104,6 +108,7 @@ export default function PersonalProfileScreen({ navigation }) {
         onRemove={closePhotoSheet}
         onCancel={closePhotoSheet}
       />
+
       <ConfirmationDialog
         visible={logoutVisible}
         title="Logout"
@@ -115,17 +120,11 @@ export default function PersonalProfileScreen({ navigation }) {
       />
     </View>
   );
-}
-
-function PressableAvatar({ source, onPress }) {
-  return (
-    <Avatar
-      source={source}
-      size={75}
-      onPress={onPress}
-    />
-  );
-}
+};
+export default PersonalProfileScreen;
+const PressableAvatar = ({ source, onPress }) => {
+  return <Avatar source={source} size={75} onPress={onPress} />;
+};
 
 const styles = StyleSheet.create({
   safe: {
@@ -137,41 +136,41 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 15,
     paddingVertical: 15,
-    justifyContent:'center',
-    alignItems:'center'
+    justifyContent: "center",
+    alignItems: "center",
   },
   profileCopy: {
-    flex: 1
+    flex: 1,
   },
   name: {
     color: colors.neutrals900,
-    ...fontStyles.lgBold
+    ...fontStyles.lgBold,
   },
   location: {
     color: colors.muted,
     ...fontStyles.xlRegular,
-    marginTop: 4
+    marginTop: 4,
   },
   editLink: {
     color: colors.primary500,
     ...fontStyles.xmBold,
-    marginTop: 5
+    marginTop: 5,
   },
   progressTrack: {
     height: 10,
     borderRadius: 8,
     overflow: "hidden",
     backgroundColor: colors.neutrals100,
-    marginTop: 5
+    marginTop: 5,
   },
   progressFill: {
     height: "100%",
-    backgroundColor: colors.primary500
+    backgroundColor: colors.primary500,
   },
   progressLabels: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 2
+    marginTop: 2,
   },
   progressText: {
     color: colors.neutrals500,
@@ -180,11 +179,11 @@ const styles = StyleSheet.create({
   missingText: {
     color: colors.neutrals500,
     ...fontStyles.xsmRegular,
-    marginTop: 4
+    marginTop: 4,
   },
   divider: {
     height: 1,
     marginBottom: 10,
     backgroundColor: colors.neutrals100,
-  }
+  },
 });

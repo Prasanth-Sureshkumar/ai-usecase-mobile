@@ -1,15 +1,15 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { ActionListRow } from "../components/SharedUIComponents";
 import { colors } from "../constants/colors";
 import { fontStyles } from "../constants/typography";
 import { IconMap } from "../components/Icons";
-
-export default function SettingsScreen({ navigation }) {
+import MyText from "../components/MyText";
+const SettingsScreen = ({ navigation }) => {
   return (
     <View style={styles.safe}>
       <View style={styles.content}>
-        <Text style={styles.sectionTitle}>Privacy & Security</Text>
+        <MyText style={styles.sectionTitle}>Privacy & Security</MyText>
         <ActionListRow
           title="Account Settings"
           iconName={IconMap.userPlaceholder}
@@ -17,19 +17,21 @@ export default function SettingsScreen({ navigation }) {
           outerRadius={40}
           onPress={() => navigation.navigate("AccountSettings")}
         />
+
         <View style={styles.divider} />
       </View>
     </View>
   );
-}
+};
+export default SettingsScreen;
 
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
   content: {
-    padding: 14
+    padding: 14,
   },
   sectionTitle: {
     color: colors.neutrals900,
@@ -38,6 +40,6 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     marginTop: 14,
-    backgroundColor: colors.neutrals100
-  }
+    backgroundColor: colors.neutrals100,
+  },
 });

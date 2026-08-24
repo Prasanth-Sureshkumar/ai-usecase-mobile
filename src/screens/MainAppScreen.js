@@ -13,16 +13,13 @@ import MoreScreen from "./MoreScreen";
 
 const MAX_VISIBLE_DYNAMIC_ITEMS = 2;
 const MainTab = createBottomTabNavigator();
-
-function renderMainHeader() {
+const renderMainHeader = () => {
   return <MainHeader logoUrl={MAIN_HEADER_LOGO_URL} />;
-}
-
-function renderBottomTabBar(props) {
+};
+const renderBottomTabBar = props => {
   return <BottomTabBar {...props} />;
-}
-
-function MainTabScreen({ route }) {
+};
+const MainTabScreen = ({ route }) => {
   const item = route.params?.item;
   const isFocused = useIsFocused();
 
@@ -37,15 +34,14 @@ function MainTabScreen({ route }) {
       active={Platform.OS === "android" ? isFocused : true}
     />
   );
-}
-
-export default function MainAppScreen() {
+};
+const MainAppScreen = () => {
   const [menus, setMenus] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let alive = true;
-    async function loadMenus() {
+    const loadMenus = async () => {
       try {
         const response = await getMenus();
         if (!alive) return;
@@ -53,7 +49,7 @@ export default function MainAppScreen() {
       } finally {
         if (alive) setLoading(false);
       }
-    }
+    };
 
     loadMenus();
     return () => {
@@ -79,7 +75,7 @@ export default function MainAppScreen() {
           }}
           tabBar={renderBottomTabBar}
         >
-          {bottomItems.map((item) => (
+          {bottomItems.map(item => (
             <MainTab.Screen
               key={item.id}
               name={item.id}
@@ -87,7 +83,7 @@ export default function MainAppScreen() {
               initialParams={{ item }}
               options={{
                 tabBarLabel: item.name,
-                icon: item.icon
+                icon: item.icon,
               }}
             />
           ))}
@@ -95,11 +91,12 @@ export default function MainAppScreen() {
       )}
     </View>
   );
-}
+};
+export default MainAppScreen;
 
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: colors.white
-  }
+    backgroundColor: colors.white,
+  },
 });

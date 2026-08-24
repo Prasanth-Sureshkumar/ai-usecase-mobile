@@ -1,49 +1,43 @@
 import React from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet } from "react-native";
 import { colors } from "../constants/colors";
+import MyText from "./MyText";
 
 export const ICON_FONT_FAMILY = "icons";
 
 export const IconMap = {
-  threedotAlt: 0xE81E,
-  eyeOff: 0xE833,
-  eye: 0xE841,
-  regentSprinke: 0xE806,
-  document: 0xE808,
-  pencil: 0xE80A,
-  threedot: 0xE81E,
-  rightArrow: 0xE801,
-  leftArrow: 0xE800,
-  rightOpen: 0xF006,
-  leftOpen: 0xF007,
-  dropDown: 0xF004,
-  backArrowLeft: 0xF007,
-  alert: 0xE809,
-  check: 0xE80B,
-  dustbin: 0xE80C,
-  lock: 0xE80D,
-  userPlaceholder: 0xE80F,
-  message: 0xE810,
-  phone: 0xE811,
-  gender: 0xE812,
-  gear: 0xE813,
-  exitIcon: 0xE814,
-  userRemove: 0xE80E,
-  caution: 0xE815,
-  cake: 0xE816,
+  threedotAlt: 0xe81e,
+  eyeOff: 0xe833,
+  eye: 0xe841,
+  regentSprinke: 0xe806,
+  document: 0xe808,
+  pencil: 0xe80a,
+  threedot: 0xe81e,
+  rightArrow: 0xe801,
+  leftArrow: 0xe800,
+  rightOpen: 0xf006,
+  leftOpen: 0xf007,
+  dropDown: 0xf004,
+  backArrowLeft: 0xf007,
+  alert: 0xe809,
+  check: 0xe80b,
+  dustbin: 0xe80c,
+  lock: 0xe80d,
+  userPlaceholder: 0xe80f,
+  message: 0xe810,
+  phone: 0xe811,
+  gender: 0xe812,
+  gear: 0xe813,
+  exitIcon: 0xe814,
+  userRemove: 0xe80e,
+  caution: 0xe815,
+  cake: 0xe816,
 };
-
-export function getIconGlyph(name) {
+export const getIconGlyph = name => {
   const codepoint = typeof name === "number" ? name : IconMap[name];
   return typeof codepoint === "number" ? String.fromCodePoint(codepoint) : "";
-}
-
-export default function Icon({
-  name,
-  color = colors.navy,
-  size = 28,
-  style
-}) {
+};
+const Icon = ({ name, color = colors.navy, size = 28, style }) => {
   const glyph = getIconGlyph(name);
 
   if (!glyph) {
@@ -51,28 +45,29 @@ export default function Icon({
   }
 
   return (
-    <Text
+    <MyText
       allowFontScaling={false}
       style={[
         styles.icon,
         {
           color,
           fontSize: size,
-          lineHeight: size
+          lineHeight: size,
         },
-        style
+        style,
       ]}
     >
       {glyph}
-    </Text>
+    </MyText>
   );
-}
+};
+export default Icon;
 
 const styles = StyleSheet.create({
   icon: {
     fontFamily: ICON_FONT_FAMILY,
     includeFontPadding: false,
     textAlign: "center",
-    textAlignVertical: "center"
-  }
+    textAlignVertical: "center",
+  },
 });

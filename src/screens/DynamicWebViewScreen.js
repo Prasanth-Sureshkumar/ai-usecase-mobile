@@ -5,12 +5,8 @@ import ErrorMessage from "../components/ErrorMessage";
 import LoadingIndicator from "../components/LoadingIndicator";
 import { colors } from "../constants/colors";
 import { isValidUrl } from "../utils/validation";
-
-export default function DynamicWebViewScreen(props) {
-  const {
-    url,
-    active = true
-  } = props.route?.params ?? props;
+const DynamicWebViewScreen = props => {
+  const { url, active = true } = props.route?.params ?? props;
   const webViewRef = useRef(null);
   const [canGoBack, setCanGoBack] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -19,13 +15,16 @@ export default function DynamicWebViewScreen(props) {
   useEffect(() => {
     if (Platform.OS !== "android" || !active) return undefined;
 
-    const subscription = BackHandler.addEventListener("hardwareBackPress", () => {
-      if (canGoBack && webViewRef.current) {
-        webViewRef.current.goBack();
-        return true;
-      }
-      return false;
-    });
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        if (canGoBack && webViewRef.current) {
+          webViewRef.current.goBack();
+          return true;
+        }
+        return false;
+      },
+    );
 
     return () => subscription.remove();
   }, [active, canGoBack]);
@@ -50,11 +49,14 @@ export default function DynamicWebViewScreen(props) {
         onLoadEnd={() => setLoading(false)}
         onError={() => {
           setLoading(false);
-          setLoadError("Unable to load this page. Check your internet connection and try again.");
+          setLoadError(
+            "Unable to load this page. Check your internet connection and try again.",
+          );
         }}
-        onNavigationStateChange={(event) => setCanGoBack(event.canGoBack)}
-        onShouldStartLoadWithRequest={(request) => {
-          const isExternal = !request.url.startsWith(url) && request.navigationType === "click";
+        onNavigationStateChange={event => setCanGoBack(event.canGoBack)}
+        onShouldStartLoadWithRequest={request => {
+          const isExternal =
+            !request.url.startsWith(url) && request.navigationType === "click";
           if (isExternal && /^https?:\/\//.test(request.url)) {
             Linking.openURL(request.url).catch(() => {});
             return false;
@@ -64,7 +66,12 @@ export default function DynamicWebViewScreen(props) {
         startInLoadingState
         renderLoading={() => <LoadingIndicator label="Loading..." />}
       />
-      {loading ? <View style={styles.loader}><LoadingIndicator label="Loading..." /></View> : null}
+
+      {loading ? (
+        <View style={styles.loader}>
+          <LoadingIndicator label="Loading..." />
+        </View>
+      ) : null}
       {loadError ? (
         <View style={styles.errorOverlay}>
           <ErrorMessage message={loadError} compact />
@@ -72,27 +79,28 @@ export default function DynamicWebViewScreen(props) {
       ) : null}
     </View>
   );
-}
+};
+export default DynamicWebViewScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
   loader: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
   errorOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: colors.white,
     justifyContent: "center",
-    paddingHorizontal: 24
+    paddingHorizontal: 24,
   },
   errorWrap: {
     flex: 1,
     justifyContent: "center",
     backgroundColor: colors.white,
-    paddingHorizontal: 24
-  }
+    paddingHorizontal: 24,
+  },
 });

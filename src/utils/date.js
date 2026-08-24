@@ -1,4 +1,4 @@
-export function formatDateOnly(value) {
+export const formatDateOnly = value => {
   if (!value) return null;
   const date = value instanceof Date ? value : new Date(value);
 
@@ -11,9 +11,8 @@ export function formatDateOnly(value) {
   const day = String(date.getDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
-}
-
-export function getDateOnlyValue(value, fallback = new Date(2000, 0, 1)) {
+};
+export const getDateOnlyValue = (value, fallback = new Date(2000, 0, 1)) => {
   if (!value) return fallback;
 
   const dateOnlyMatch = String(value).match(/^(\d{4})-(\d{2})-(\d{2})/);
@@ -25,4 +24,4 @@ export function getDateOnlyValue(value, fallback = new Date(2000, 0, 1)) {
 
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? fallback : date;
-}
+};

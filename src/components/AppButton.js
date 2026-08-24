@@ -1,11 +1,18 @@
 import React from "react";
-import { ActivityIndicator, Pressable, StyleSheet, Text } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet } from "react-native";
 import { colors } from "../constants/colors";
 import { screen } from "../constants/spacing";
 import { weights } from "../constants/typography";
 import Icon, { IconMap } from "./Icons";
-
-export default function AppButton({ label, onPress, disabled, loading, icon = false, style }) {  
+import MyText from "./MyText";
+const AppButton = ({
+  label,
+  onPress,
+  disabled,
+  loading,
+  icon = false,
+  style,
+}) => {
   return (
     <Pressable
       disabled={disabled || loading}
@@ -14,14 +21,21 @@ export default function AppButton({ label, onPress, disabled, loading, icon = fa
         styles.button,
         (disabled || loading) && styles.disabled,
         pressed && !disabled && !loading && styles.pressed,
-        style
+        style,
       ]}
     >
-      {loading ? <ActivityIndicator color={colors.white} /> : <Text style={styles.text}>{label}</Text>}
-      {!loading && icon ? <Icon name={IconMap.rightArrow} color={colors.white} size={20} />: null}
+      {loading ? (
+        <ActivityIndicator color={colors.white} />
+      ) : (
+        <MyText style={styles.text}>{label}</MyText>
+      )}
+      {!loading && icon ? (
+        <Icon name={IconMap.rightArrow} color={colors.white} size={20} />
+      ) : null}
     </Pressable>
   );
-}
+};
+export default AppButton;
 
 const styles = StyleSheet.create({
   button: {
@@ -31,17 +45,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
-    gap: 10
+    gap: 10,
   },
   pressed: {
-    opacity: 0.86
+    opacity: 0.86,
   },
   disabled: {
-    opacity: 0.62
+    opacity: 0.62,
   },
   text: {
     color: colors.white,
     fontSize: 18,
-    fontWeight: weights.regular
-  }
+    fontWeight: weights.regular,
+  },
 });

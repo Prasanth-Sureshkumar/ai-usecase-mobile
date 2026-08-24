@@ -5,21 +5,37 @@ import {
   Modal,
   Pressable,
   StyleSheet,
-  Text,
   TouchableWithoutFeedback,
-  View
+  View,
 } from "react-native";
 import { colors } from "../constants/colors";
 import { fontStyles, weights } from "../constants/typography";
 import Icon, { IconMap } from "./Icons";
-
-export function Avatar({ uri, source, size = 75, editable = false, onPress, style }) {
+import MyText from "./MyText";
+export const Avatar = ({
+  uri,
+  source,
+  size = 75,
+  editable = false,
+  onPress,
+  style,
+}) => {
   const imageSource = source || (uri ? { uri } : null);
 
   return (
-    <Pressable disabled={!onPress} onPress={onPress} style={[{ width: size, height: size }, style]}>
+    <Pressable
+      disabled={!onPress}
+      onPress={onPress}
+      style={[{ width: size, height: size }, style]}
+    >
       {imageSource ? (
-        <Image source={imageSource} style={[styles.avatar, { width: size, height: size, borderRadius: size / 2 }]} />
+        <Image
+          source={imageSource}
+          style={[
+            styles.avatar,
+            { width: size, height: size, borderRadius: size / 2 },
+          ]}
+        />
       ) : null}
       {editable ? (
         <View style={styles.avatarEdit}>
@@ -28,26 +44,38 @@ export function Avatar({ uri, source, size = 75, editable = false, onPress, styl
       ) : null}
     </Pressable>
   );
-}
-
-export function GlyphBadge({ iconName, iconSize, outerRadius, color = colors.neutrals900, backgroundColor = colors.neutrals100 }) {
-
+};
+export const GlyphBadge = ({
+  iconName,
+  iconSize,
+  outerRadius,
+  color = colors.neutrals900,
+  backgroundColor = colors.neutrals100,
+}) => {
   return (
-    <View style={[styles.glyphBadge, { width: outerRadius, height: outerRadius, borderRadius: outerRadius / 2 }, { backgroundColor }]}>
+    <View
+      style={[
+        styles.glyphBadge,
+        {
+          width: outerRadius,
+          height: outerRadius,
+          borderRadius: outerRadius / 2,
+        },
+        { backgroundColor },
+      ]}
+    >
       <Icon name={iconName} size={iconSize} color={color} />
     </View>
   );
-}
-
-export function RoundChevron({ }) {
+};
+export const RoundChevron = ({}) => {
   return (
     <View style={styles.chevronCircle}>
       <Icon name={IconMap.rightOpen} color={colors.white} size={10} />
     </View>
   );
-}
-
-export function ActionListRow({
+};
+export const ActionListRow = ({
   title,
   iconName,
   onPress,
@@ -57,7 +85,7 @@ export function ActionListRow({
   outerRadius = 0,
   iconSize = 0,
   backgroundColor = colors.neutrals100,
-}) {
+}) => {
   return (
     <Pressable
       onPress={onPress}
@@ -65,7 +93,7 @@ export function ActionListRow({
       style={({ pressed }) => [
         styles.row,
         withDivider && styles.rowDivider,
-        pressed && onPress && styles.pressed
+        pressed && onPress && styles.pressed,
       ]}
     >
       <GlyphBadge
@@ -75,22 +103,22 @@ export function ActionListRow({
         color={color}
         backgroundColor={backgroundColor}
       />
-      <Text style={[styles.rowTitle, { color: color }]} numberOfLines={1}>
+
+      <MyText style={[styles.rowTitle, { color: color }]} numberOfLines={1}>
         {title}
-      </Text>
+      </MyText>
       {showChevron ? <RoundChevron /> : null}
     </Pressable>
   );
-}
-
-export function InfoRow({
+};
+export const InfoRow = ({
   iconName = null,
   color = colors.neutrals900,
   outerRadius = 0,
   iconSize = 0,
   backgroundColor = colors.neutrals100,
   value = null,
-}) {
+}) => {
   return (
     <View style={styles.infoRow}>
       <GlyphBadge
@@ -100,12 +128,14 @@ export function InfoRow({
         color={color}
         backgroundColor={backgroundColor}
       />
-      <Text style={styles.infoText} numberOfLines={1}>{value}</Text>
+
+      <MyText style={styles.infoText} numberOfLines={1}>
+        {value}
+      </MyText>
     </View>
   );
-}
-
-export function ConfirmationDialog({
+};
+export const ConfirmationDialog = ({
   visible,
   title,
   message,
@@ -115,44 +145,73 @@ export function ConfirmationDialog({
   onCancel,
   onConfirm,
   destructive = true,
-}) {
+}) => {
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onCancel}
+    >
       <TouchableWithoutFeedback onPress={loading ? undefined : onCancel}>
         <View style={styles.modalOverlay}>
           <TouchableWithoutFeedback>
             <View style={styles.dialog}>
-              <View style={[styles.alertIcon, !destructive && styles.successIcon]}>
+              <View
+                style={[styles.alertIcon, !destructive && styles.successIcon]}
+              >
                 {destructive ? (
-                  <Icon name={IconMap.caution} color={colors.red600} size={38} />
+                  <Icon
+                    name={IconMap.caution}
+                    color={colors.red600}
+                    size={38}
+                  />
                 ) : (
-                  <Icon name={IconMap.check} color={colors.primary500} size={34} />
+                  <Icon
+                    name={IconMap.check}
+                    color={colors.primary500}
+                    size={34}
+                  />
                 )}
               </View>
-              <Text style={styles.dialogTitle}>{title}</Text>
-              <Text style={styles.dialogMessage}>{message}</Text>
+              <MyText style={styles.dialogTitle}>{title}</MyText>
+              <MyText style={styles.dialogMessage}>{message}</MyText>
               <View style={styles.dialogActions}>
                 <Pressable
                   disabled={loading}
                   onPress={onConfirm}
                   style={({ pressed }) => [
                     styles.dialogButton,
-                    destructive ? styles.destructiveButton : styles.primaryButton,
+                    destructive
+                      ? styles.destructiveButton
+                      : styles.primaryButton,
                     pressed && styles.pressed,
-                    loading && styles.disabled
+                    loading && styles.disabled,
                   ]}
                 >
-                  {loading ? <ActivityIndicator color={colors.white} /> : <Text style={styles.filledButtonText}>{confirmLabel}</Text>}
+                  {loading ? (
+                    <ActivityIndicator color={colors.white} />
+                  ) : (
+                    <MyText style={styles.filledButtonText}>
+                      {confirmLabel}
+                    </MyText>
+                  )}
                 </Pressable>
-                {onCancel &&
+                {onCancel && (
                   <Pressable
                     disabled={loading}
                     onPress={onCancel}
-                    style={({ pressed }) => [styles.dialogButton, styles.outlineButton, pressed && styles.pressed]}
+                    style={({ pressed }) => [
+                      styles.dialogButton,
+                      styles.outlineButton,
+                      pressed && styles.pressed,
+                    ]}
                   >
-                    <Text style={styles.outlineButtonText}>{cancelLabel}</Text>
+                    <MyText style={styles.outlineButtonText}>
+                      {cancelLabel}
+                    </MyText>
                   </Pressable>
-                }
+                )}
               </View>
             </View>
           </TouchableWithoutFeedback>
@@ -160,26 +219,32 @@ export function ConfirmationDialog({
       </TouchableWithoutFeedback>
     </Modal>
   );
-}
-
-export function PhotoActionSheet({
+};
+export const PhotoActionSheet = ({
   visible,
   hasImage = true,
   onUpload,
   onCapture,
   onRemove,
-  onCancel
-}) {
+  onCancel,
+}) => {
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onCancel}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      onRequestClose={onCancel}
+    >
       <TouchableWithoutFeedback onPress={onCancel}>
         <View style={styles.sheetOverlay}>
           <TouchableWithoutFeedback>
             <View style={styles.sheet}>
-              <Text style={styles.sheetTitle}>Profile Photo</Text>
+              <MyText style={styles.sheetTitle}>Profile Photo</MyText>
               <SheetAction label="Upload Image" onPress={onUpload} />
               <SheetAction label="Capture Image" onPress={onCapture} />
-              {hasImage ? <SheetAction label="Remove Image" onPress={onRemove} danger /> : null}
+              {hasImage ? (
+                <SheetAction label="Remove Image" onPress={onRemove} danger />
+              ) : null}
               <SheetAction label="Cancel" onPress={onCancel} />
             </View>
           </TouchableWithoutFeedback>
@@ -187,15 +252,19 @@ export function PhotoActionSheet({
       </TouchableWithoutFeedback>
     </Modal>
   );
-}
-
-function SheetAction({ label, onPress, danger = false }) {
+};
+const SheetAction = ({ label, onPress, danger = false }) => {
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.sheetAction, pressed && styles.pressed]}>
-      <Text style={[styles.sheetActionText, danger && styles.dangerText]}>{label}</Text>
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [styles.sheetAction, pressed && styles.pressed]}
+    >
+      <MyText style={[styles.sheetActionText, danger && styles.dangerText]}>
+        {label}
+      </MyText>
     </Pressable>
   );
-}
+};
 
 const styles = StyleSheet.create({
   avatar: {
@@ -213,16 +282,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: colors.primary500,
     borderWidth: 2,
-    borderColor: colors.white
+    borderColor: colors.white,
   },
   glyphBadge: {
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   glyphText: {
     fontSize: 12,
     lineHeight: 18,
-    fontWeight: weights.bold
+    fontWeight: weights.bold,
   },
   chevronCircle: {
     width: 20,
@@ -230,10 +299,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.primary500
+    backgroundColor: colors.primary500,
   },
   dangerChevron: {
-    backgroundColor: colors.redText
+    backgroundColor: colors.redText,
   },
   row: {
     flexDirection: "row",
@@ -243,39 +312,39 @@ const styles = StyleSheet.create({
   },
   rowDivider: {
     borderTopWidth: 1,
-    borderTopColor: colors.neutrals100
+    borderTopColor: colors.neutrals100,
   },
   rowTitle: {
     flex: 1,
     color: colors.neutrals900,
-    ...fontStyles.smRegular
+    ...fontStyles.smRegular,
   },
   dangerText: {
-    color: colors.redText
+    color: colors.redText,
   },
   infoRow: {
     paddingVertical: 8,
     flexDirection: "row",
     alignItems: "center",
-    gap: 14
+    gap: 14,
   },
   infoText: {
     flex: 1,
     color: colors.neutrals900,
-    ...fontStyles.smRegular
+    ...fontStyles.smRegular,
   },
   pressed: {
-    opacity: 0.76
+    opacity: 0.76,
   },
   disabled: {
-    opacity: 0.7
+    opacity: 0.7,
   },
   modalOverlay: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "rgba(0, 0, 0, 0.32)",
-    paddingHorizontal: 24
+    paddingHorizontal: 24,
   },
   dialog: {
     width: "100%",
@@ -285,54 +354,54 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 28,
     paddingTop: 20,
-    paddingBottom: 22
+    paddingBottom: 22,
   },
   alertIcon: {
     height: 48,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 4
+    marginBottom: 4,
   },
   successIcon: {
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: colors.primarySoft
+    backgroundColor: colors.primarySoft,
   },
   dialogTitle: {
     color: colors.neutrals900,
     ...fontStyles.lgBold,
     textAlign: "center",
-    marginTop: 8
+    marginTop: 8,
   },
   dialogMessage: {
     color: colors.neutrals900,
     ...fontStyles.smRegular,
     textAlign: "center",
-    marginTop: 10
+    marginTop: 10,
   },
   dialogActions: {
     flexDirection: "row",
     gap: 10,
-    marginTop: 22
+    marginTop: 22,
   },
   dialogButton: {
     flex: 1,
     height: 52,
     borderRadius: 26,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   destructiveButton: {
-    backgroundColor: colors.red600
+    backgroundColor: colors.red600,
   },
   primaryButton: {
-    backgroundColor: colors.primary500
+    backgroundColor: colors.primary500,
   },
   outlineButton: {
     borderWidth: 1,
     borderColor: colors.border,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
   filledButtonText: {
     color: colors.white,
@@ -340,12 +409,12 @@ const styles = StyleSheet.create({
   },
   outlineButtonText: {
     color: colors.neutrals900,
-    ...fontStyles.smRegular
+    ...fontStyles.smRegular,
   },
   sheetOverlay: {
     flex: 1,
     justifyContent: "flex-end",
-    backgroundColor: "rgba(0, 0, 0, 0.28)"
+    backgroundColor: "rgba(0, 0, 0, 0.28)",
   },
   sheet: {
     backgroundColor: colors.white,
@@ -353,21 +422,21 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 18,
     paddingHorizontal: 22,
     paddingTop: 18,
-    paddingBottom: 32
+    paddingBottom: 32,
   },
   sheetTitle: {
     color: colors.neutrals900,
     ...fontStyles.lgBold,
-    marginBottom: 10
+    marginBottom: 10,
   },
   sheetAction: {
     minHeight: 52,
     justifyContent: "center",
     borderTopWidth: 1,
-    borderTopColor: colors.borderLight
+    borderTopColor: colors.borderLight,
   },
   sheetActionText: {
     color: colors.neutrals900,
-    ...fontStyles.mdRegular
-  }
+    ...fontStyles.mdRegular,
+  },
 });

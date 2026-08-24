@@ -1,17 +1,17 @@
 import React from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { colors } from "../constants/colors";
 import { fontStyles, weights } from "../constants/typography";
 import Icon, { IconMap } from "./Icons";
 import { useUser } from "../context/UserContext";
+import MyText from "./MyText";
 
 const PLACEHOLDER_PROFILE_IMAGE = require("../assets/images/placeholder.png");
 
 export const MAIN_HEADER_LOGO_URL =
   "https://pub-d423d28126b8427881b12df516c6520a.r2.dev/Frame%2026796%20(1).png";
-
-export function BackHeader({
+export const BackHeader = ({
   title,
   onBack,
   arrowOnly = false,
@@ -21,69 +21,92 @@ export function BackHeader({
   onActionPress,
   onActionPressRef,
   actionInProgress = false,
-  testID
-}) {
-  const actionHandler = onActionPress || onActionPressRef?.current || onActionPressRef;
+  testID,
+}) => {
+  const actionHandler =
+    onActionPress || onActionPressRef?.current || onActionPressRef;
 
   return (
-    <View style={[styles.backHeader, arrowOnly && styles.arrowOnlyHeader, style]} testID={testID}>
-      <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} testID={testID ? `${testID}-back` : undefined}>
-        <Icon name={IconMap.backArrowLeft} color={colors.neutrals900} size={25}/>
+    <View
+      style={[styles.backHeader, arrowOnly && styles.arrowOnlyHeader, style]}
+      testID={testID}
+    >
+      <Pressable
+        onPress={onBack}
+        hitSlop={12}
+        style={styles.backButton}
+        testID={testID ? `${testID}-back` : undefined}
+      >
+        <Icon
+          name={IconMap.backArrowLeft}
+          color={colors.neutrals900}
+          size={25}
+        />
       </Pressable>
       {arrowOnly ? null : (
-        <Text
+        <MyText
           numberOfLines={1}
           style={[styles.backTitle, !isTitleBold && styles.regularTitle]}
         >
           {title}
-        </Text>
+        </MyText>
       )}
       {actionText ? (
         <Pressable
           disabled={actionInProgress}
           hitSlop={12}
           onPress={actionHandler}
-          style={[styles.actionButton, actionInProgress && styles.disabledAction]}
+          style={[
+            styles.actionButton,
+            actionInProgress && styles.disabledAction,
+          ]}
           testID={testID ? `${testID}-action` : undefined}
         >
-          <Text style={styles.actionText}>{actionText}</Text>
+          <MyText style={styles.actionText}>{actionText}</MyText>
         </Pressable>
       ) : null}
     </View>
   );
-}
-
-export function MainHeader({ logoUrl = MAIN_HEADER_LOGO_URL }) {
+};
+export const MainHeader = ({ logoUrl = MAIN_HEADER_LOGO_URL }) => {
   const navigation = useNavigation();
   const { user } = useUser();
-  const profileImage = typeof user?.picture === "string" && user.picture
-    ? { uri: user.picture }
-    : PLACEHOLDER_PROFILE_IMAGE;
-
-  function openProfile() {
+  const profileImage =
+    typeof user?.picture === "string" && user.picture
+      ? { uri: user.picture }
+      : PLACEHOLDER_PROFILE_IMAGE;
+  const openProfile = () => {
     const parentNavigation = navigation.getParent?.();
     if (parentNavigation) {
       parentNavigation.navigate("PersonalProfile");
       return;
     }
     navigation.navigate("PersonalProfile");
-  }
+  };
 
   return (
     <View style={styles.mainHeader}>
       <View style={styles.brandRow}>
-        <Image source={{ uri: logoUrl }} resizeMode="contain" style={styles.logoImage} />
+        <Image
+          source={{ uri: logoUrl }}
+          resizeMode="contain"
+          style={styles.logoImage}
+        />
         {/* <Icon name={IconMap.dropDown} color={colors.neutrals900} size={25} /> */}
       </View>
-      <Pressable onPress={openProfile} hitSlop={10} style={({ pressed }) => [styles.profileWrap, pressed && styles.pressed]}>
+      <Pressable
+        onPress={openProfile}
+        hitSlop={10}
+        style={({ pressed }) => [styles.profileWrap, pressed && styles.pressed]}
+      >
         <Image source={profileImage} style={styles.avatar} />
         {/* <View style={styles.badge}>
-          <Text style={styles.badgeText}>80</Text>
-        </View> */}
+           <MyText style={styles.badgeText}>80</MyText>
+          </View> */}
       </Pressable>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   backHeader: {
@@ -93,36 +116,36 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
   arrowOnlyHeader: {
-    borderBottomWidth: 0
+    borderBottomWidth: 0,
   },
   backButton: {
     width: 44,
     height: 44,
-    justifyContent: "center"
+    justifyContent: "center",
   },
   backTitle: {
     flex: 1,
     color: colors.neutrals900,
     ...fontStyles.lgBold,
-    marginLeft: 8
+    marginLeft: 8,
   },
   regularTitle: {
-    ...fontStyles.lgRegular
+    ...fontStyles.lgRegular,
   },
   actionButton: {
     minHeight: 44,
     justifyContent: "center",
-    paddingLeft: 12
+    paddingLeft: 12,
   },
   disabledAction: {
-    opacity: 0.5
+    opacity: 0.5,
   },
   actionText: {
     color: colors.primary500,
-    ...fontStyles.smBold
+    ...fontStyles.smBold,
   },
   mainHeader: {
     height: 74,
@@ -132,29 +155,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 14,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
   brandRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10
+    gap: 10,
   },
   logoImage: {
     width: 220,
-    height: 150
+    height: 150,
   },
   profileWrap: {
     width: 44,
-    height: 44
+    height: 44,
   },
   pressed: {
-    opacity: 0.76
+    opacity: 0.76,
   },
   avatar: {
     width: 38,
     height: 38,
     borderRadius: 19,
-    marginTop: 5
+    marginTop: 5,
   },
   badge: {
     position: "absolute",
@@ -166,11 +189,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.red700,
-    paddingHorizontal: 3
+    paddingHorizontal: 3,
   },
   badgeText: {
     color: colors.white,
     fontSize: 10,
-    fontWeight: weights.bold
-  }
+    fontWeight: weights.bold,
+  },
 });

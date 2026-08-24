@@ -21,24 +21,23 @@ import DeactivateAccountScreen from "../screens/DeactivateAccountScreen";
 import { UserProvider } from "../context/UserContext";
 
 const Stack = createNativeStackNavigator();
-
-function resolveOptionValue(value, params) {
+const resolveOptionValue = (value, params) => {
   return typeof value === "function" ? value(params) : value;
-}
-
-export function getStackHeaderOptions(
+};
+export const getStackHeaderOptions = (
   { navigation, route },
   {
     title,
     fallbackTitle,
     gestureEnabled = false,
     headerProps,
-    headerTransparent = false
-  } = {}
-) {
+    headerTransparent = false,
+  } = {},
+) => {
   const params = { navigation, route };
   const resolvedHeaderProps = resolveOptionValue(headerProps, params) || {};
-  const resolvedTitle = resolveOptionValue(title, params) || route.params?.title || fallbackTitle;
+  const resolvedTitle =
+    resolveOptionValue(title, params) || route.params?.title || fallbackTitle;
 
   return {
     headerShown: true,
@@ -50,134 +49,177 @@ export function getStackHeaderOptions(
         onBack={() => navigation.goBack()}
         {...resolvedHeaderProps}
       />
-    )
+    ),
   };
-}
-
-export function getHiddenHeaderOptions({ gestureEnabled = false } = {}) {
+};
+export const getHiddenHeaderOptions = ({ gestureEnabled = false } = {}) => {
   return {
     headerShown: false,
-    gestureEnabled
-  };
-}
-
-export function getActionHeaderOptions({
-  navigation,
-  route
-}, {
-  title,
-  fallbackTitle,
-  actionText,
-  testID,
-  gestureEnabled = false
-}) {
-  return getStackHeaderOptions({ navigation, route }, {
-    title,
-    fallbackTitle,
     gestureEnabled,
-    headerProps: (params) => ({
-      isTitleBold: true,
-      actionText: resolveOptionValue(actionText, params),
-      onActionPressRef: params.route.params?.onActionPress || params.route.params?.onPost,
-      actionInProgress: Boolean(params.route.params?.isLoading),
-      testID
-    })
-  });
-}
-
-export function getHiddenDetailOptions() {
+  };
+};
+export const getActionHeaderOptions = (
+  { navigation, route },
+  { title, fallbackTitle, actionText, testID, gestureEnabled = false },
+) => {
+  return getStackHeaderOptions(
+    { navigation, route },
+    {
+      title,
+      fallbackTitle,
+      gestureEnabled,
+      headerProps: params => ({
+        isTitleBold: true,
+        actionText: resolveOptionValue(actionText, params),
+        onActionPressRef:
+          params.route.params?.onActionPress || params.route.params?.onPost,
+        actionInProgress: Boolean(params.route.params?.isLoading),
+        testID,
+      }),
+    },
+  );
+};
+export const getHiddenDetailOptions = () => {
   return getHiddenHeaderOptions({
-    gestureEnabled: false
+    gestureEnabled: false,
   });
-}
-
-export default function RootNavigator() {
+};
+const RootNavigator = () => {
   return (
     <UserProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="InitialSplash" screenOptions={{ headerShown: false }}>
+        <Stack.Navigator
+          initialRouteName="InitialSplash"
+          screenOptions={{ headerShown: false }}
+        >
           <Stack.Screen name="InitialSplash" component={InitialSplashScreen} />
           <Stack.Screen
             name="PreLogin"
             component={PreLoginScreen}
-            options={(props) => (
+            options={props =>
               props.route.params?.showHeader
                 ? getStackHeaderOptions(props, { fallbackTitle: "New User" })
                 : getHiddenHeaderOptions()
-            )}
+            }
           />
+
           <Stack.Screen
             name="Login"
             component={LoginScreen}
-            options={(props) => getStackHeaderOptions(props, {
-              headerTransparent: true,
-              headerProps: {
-                arrowOnly: true,
-                style: styles.transparentBackHeader
-              }
-            })}
+            options={props =>
+              getStackHeaderOptions(props, {
+                headerTransparent: true,
+                headerProps: {
+                  arrowOnly: true,
+                  style: styles.transparentBackHeader,
+                },
+              })
+            }
           />
+
           <Stack.Screen
             name="Register"
             component={RegisterScreen}
-            options={(props) => getStackHeaderOptions(props, { fallbackTitle: "Registration" })}
+            options={props =>
+              getStackHeaderOptions(props, { fallbackTitle: "Registration" })
+            }
           />
-          <Stack.Screen name="RegistrationSuccess" component={RegistrationSuccessScreen} />
-          <Stack.Screen name="PostAuthSplash" component={PostAuthSplashScreen} />
+
+          <Stack.Screen
+            name="RegistrationSuccess"
+            component={RegistrationSuccessScreen}
+          />
+          <Stack.Screen
+            name="PostAuthSplash"
+            component={PostAuthSplashScreen}
+          />
           <Stack.Screen
             name="MainApp"
             component={MainAppScreen}
             options={() => getHiddenHeaderOptions()}
           />
+
           <Stack.Screen
             name="InAppBrowser"
             component={DynamicWebViewScreen}
-            options={(props) => getStackHeaderOptions(props, { fallbackTitle: "Webview" })}
+            options={props =>
+              getStackHeaderOptions(props, { fallbackTitle: "Webview" })
+            }
           />
+
           <Stack.Screen
             name="PersonalProfile"
             component={PersonalProfileScreen}
-            options={(props) => getStackHeaderOptions(props, { fallbackTitle: "Personal Profile" })}
+            options={props =>
+              getStackHeaderOptions(props, {
+                fallbackTitle: "Personal Profile",
+              })
+            }
           />
+
           <Stack.Screen
             name="ProfileInfo"
             component={ProfileInfoScreen}
-            options={(props) => getStackHeaderOptions(props, { fallbackTitle: "Personal Info" })}
+            options={props =>
+              getStackHeaderOptions(props, { fallbackTitle: "Personal Info" })
+            }
           />
+
           <Stack.Screen
             name="EditPersonalInfo"
             component={EditPersonalInfoScreen}
-            options={(props) => getStackHeaderOptions(props, { fallbackTitle: "Personal Information" })}
+            options={props =>
+              getStackHeaderOptions(props, {
+                fallbackTitle: "Personal Information",
+              })
+            }
           />
+
           <Stack.Screen
             name="Settings"
             component={SettingsScreen}
-            options={(props) => getStackHeaderOptions(props, { fallbackTitle: "Settings" })}
+            options={props =>
+              getStackHeaderOptions(props, { fallbackTitle: "Settings" })
+            }
           />
+
           <Stack.Screen
             name="AccountSettings"
             component={AccountSettingsScreen}
-            options={(props) => getStackHeaderOptions(props, { fallbackTitle: "Account Settings" })}
+            options={props =>
+              getStackHeaderOptions(props, {
+                fallbackTitle: "Account Settings",
+              })
+            }
           />
+
           <Stack.Screen
             name="ChangePassword"
             component={ChangePasswordScreen}
-            options={(props) => getStackHeaderOptions(props, { fallbackTitle: "Change Password" })}
+            options={props =>
+              getStackHeaderOptions(props, { fallbackTitle: "Change Password" })
+            }
           />
+
           <Stack.Screen
             name="DeactivateAccount"
             component={DeactivateAccountScreen}
-            options={(props) => getStackHeaderOptions(props, { fallbackTitle: "Deactivate Account" })}
+            options={props =>
+              getStackHeaderOptions(props, {
+                fallbackTitle: "Deactivate Account",
+              })
+            }
           />
         </Stack.Navigator>
       </NavigationContainer>
     </UserProvider>
   );
-}
+};
+export default RootNavigator;
 
 const styles = StyleSheet.create({
   transparentBackHeader: {
     marginTop: 30,
-    backgroundColor: 'transparent',
-  }
+    backgroundColor: "transparent",
+  },
 });

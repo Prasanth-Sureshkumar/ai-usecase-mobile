@@ -1,12 +1,12 @@
 import React from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, TextInput, View } from "react-native";
 import { colors } from "../constants/colors";
 import { screen } from "../constants/spacing";
 import { fontStyles } from "../constants/typography";
 import { useKeyboardAwareScroll } from "./KeyboardAwareScrollScreen";
 import Icon, { IconMap } from "./Icons";
-
-export default function AppInput({
+import MyText from "./MyText";
+const AppInput = ({
   label,
   value,
   onChangeText,
@@ -19,19 +19,24 @@ export default function AppInput({
   onRightPress,
   rightElement,
   onFocus,
-  error
-}) {
+  error,
+}) => {
   const { scheduleScrollToFocusedInput } = useKeyboardAwareScroll();
-
-  function handleFocus(event) {
+  const handleFocus = event => {
     onFocus?.(event);
     scheduleScrollToFocusedInput();
-  }
+  };
 
   return (
     <View style={styles.wrap}>
-      {label ? <Text style={styles.label}>{label}</Text> : null}
-      <View style={[styles.inputShell, !editable && styles.disabledShell, error && styles.errorShell]}>
+      {label ? <MyText style={styles.label}>{label}</MyText> : null}
+      <View
+        style={[
+          styles.inputShell,
+          !editable && styles.disabledShell,
+          error && styles.errorShell,
+        ]}
+      >
         <TextInput
           value={value}
           onChangeText={onChangeText}
@@ -45,6 +50,7 @@ export default function AppInput({
           onFocus={handleFocus}
           style={styles.input}
         />
+
         {rightIcon === "edit" ? (
           <Pressable onPress={onRightPress} hitSlop={10}>
             <Icon name={IconMap.pencil} color={colors.neutrals900} size={18} />
@@ -52,14 +58,15 @@ export default function AppInput({
         ) : null}
         {rightElement || null}
       </View>
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+      {error ? <MyText style={styles.error}>{error}</MyText> : null}
     </View>
   );
-}
+};
+export default AppInput;
 
 const styles = StyleSheet.create({
   wrap: {
-    gap: 10
+    gap: 10,
   },
   label: {
     color: colors.neutrals900,
@@ -73,23 +80,23 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     paddingHorizontal: 18,
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
   },
   disabledShell: {
-    backgroundColor: colors.inputDisabled
+    backgroundColor: colors.inputDisabled,
   },
   errorShell: {
-    borderColor: colors.red
+    borderColor: colors.red,
   },
   input: {
     flex: 1,
     color: colors.text,
     fontSize: 18,
-    paddingVertical: 0
+    paddingVertical: 0,
   },
   error: {
     color: colors.redText,
     fontSize: 13,
-    marginTop: -4
-  }
+    marginTop: -4,
+  },
 });

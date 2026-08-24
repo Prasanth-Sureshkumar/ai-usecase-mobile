@@ -4,8 +4,7 @@ import SuccessState from "../components/SuccessState";
 import { colors } from "../constants/colors";
 import { REGISTER_SUCCESS_DURATION } from "../constants/timing";
 import { POST_AUTH_LOGO_URL } from "../constants/branding";
-
-export default function RegistrationSuccessScreen({ navigation }) {
+const RegistrationSuccessScreen = ({ navigation }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigation.replace("PostAuthSplash", { logoUrl: POST_AUTH_LOGO_URL });
@@ -18,11 +17,14 @@ export default function RegistrationSuccessScreen({ navigation }) {
     <View style={styles.container}>
       <SuccessState
         title={"Account Created\nSuccessfully!"}
-        message={"Your account has been created\nsuccessfully for Regents School."}
+        message={
+          "Your account has been created\nsuccessfully for Regents School."
+        }
       />
     </View>
   );
-}
+};
+export default RegistrationSuccessScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -30,6 +32,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.white,
-    paddingHorizontal: 28
-  }
+    paddingHorizontal: 28,
+  },
 });

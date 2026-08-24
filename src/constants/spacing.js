@@ -4,7 +4,7 @@ export const spacing = {
   md: 16,
   lg: 24,
   xl: 32,
-  xxl: 48
+  xxl: 48,
 };
 
 export const screen = {
@@ -12,5 +12,5 @@ export const screen = {
   authTop: 78,
   fieldHeight: 58,
   buttonHeight: 58,
-  bottomTabsHeight: 75
+  bottomTabsHeight: 75,
 };

@@ -1,10 +1,10 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { colors } from "../constants/colors";
 import { fontStyles } from "../constants/typography";
 import Icon, { IconMap } from "./Icons";
-
-export default function SuccessState({ title, message }) {
+import MyText from "./MyText";
+const SuccessState = ({ title, message }) => {
   const fieldSize = 260;
   const spacing = 12;
 
@@ -56,33 +56,30 @@ export default function SuccessState({ title, message }) {
               style={[
                 styles.dot,
                 {
-                left: x - dotSize / 2,
-                top: y - dotSize / 2,
-                width: dotSize,
-                height: dotSize,
-                borderRadius: dotSize / 2,
-                backgroundColor: colors.neutrals300,
-                opacity
-                }
+                  left: x - dotSize / 2,
+                  top: y - dotSize / 2,
+                  width: dotSize,
+                  height: dotSize,
+                  borderRadius: dotSize / 2,
+                  backgroundColor: colors.neutrals300,
+                  opacity,
+                },
               ]}
             />
           );
         })}
 
         <View style={styles.checkCircle}>
-          <Icon
-          size={74}
-          name={IconMap.check}
-          color={colors.white}
-          />
+          <Icon size={74} name={IconMap.check} color={colors.white} />
         </View>
       </View>
 
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.message}>{message}</Text>
+      <MyText style={styles.title}>{title}</MyText>
+      <MyText style={styles.message}>{message}</MyText>
     </View>
   );
-}
+};
+export default SuccessState;
 
 const styles = StyleSheet.create({
   wrap: {
@@ -94,7 +91,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   dot: {
-    position: "absolute"
+    position: "absolute",
   },
   checkCircle: {
     width: 120,

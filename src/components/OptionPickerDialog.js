@@ -1,31 +1,46 @@
 import React from "react";
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { colors } from "../constants/colors";
 import { fontStyles } from "../constants/typography";
-
-export default function OptionPickerDialog({ visible, title, options, onCancel, onSelect }) {
+import MyText from "./MyText";
+const OptionPickerDialog = ({
+  visible,
+  title,
+  options,
+  onCancel,
+  onSelect,
+}) => {
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onCancel}
+    >
       <View style={styles.overlay}>
         <View style={styles.card}>
-          <Text style={styles.title}>{title}</Text>
-          {options.map((option) => (
+          <MyText style={styles.title}>{title}</MyText>
+          {options.map(option => (
             <Pressable
               key={option.value}
               onPress={() => onSelect(option.value)}
-              style={({ pressed }) => [styles.optionRow, pressed && styles.pressed]}
+              style={({ pressed }) => [
+                styles.optionRow,
+                pressed && styles.pressed,
+              ]}
             >
-              <Text style={styles.optionText}>{option.label}</Text>
+              <MyText style={styles.optionText}>{option.label}</MyText>
             </Pressable>
           ))}
           <Pressable onPress={onCancel} style={styles.cancelAction}>
-            <Text style={styles.cancelText}>Cancel</Text>
+            <MyText style={styles.cancelText}>Cancel</MyText>
           </Pressable>
         </View>
       </View>
     </Modal>
   );
-}
+};
+export default OptionPickerDialog;
 
 const styles = StyleSheet.create({
   overlay: {
@@ -33,30 +48,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "rgba(0, 0, 0, 0.32)",
-    paddingHorizontal: 24
+    paddingHorizontal: 24,
   },
   card: {
     width: "100%",
     maxWidth: 380,
     borderRadius: 8,
     backgroundColor: colors.white,
-    padding: 22
+    padding: 22,
   },
   title: {
     color: colors.neutrals900,
     ...fontStyles.lgBold,
     textAlign: "center",
-    marginBottom: 16
+    marginBottom: 16,
   },
   optionRow: {
     minHeight: 50,
     justifyContent: "center",
     borderTopWidth: 1,
-    borderTopColor: colors.borderLight
+    borderTopColor: colors.borderLight,
   },
   optionText: {
     color: colors.neutrals900,
-    ...fontStyles.mdRegular
+    ...fontStyles.mdRegular,
   },
   cancelAction: {
     height: 48,
@@ -66,13 +81,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     marginTop: 12,
-    paddingHorizontal: 24
+    paddingHorizontal: 24,
   },
   cancelText: {
     color: colors.neutrals900,
-    ...fontStyles.smRegular
+    ...fontStyles.smRegular,
   },
   pressed: {
-    opacity: 0.76
-  }
+    opacity: 0.76,
+  },
 });
