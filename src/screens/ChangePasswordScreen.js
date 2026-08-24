@@ -8,7 +8,7 @@ import Icon, { IconMap } from "../components/Icons";
 import { colors } from "../constants/colors";
 import { screen } from "../constants/spacing";
 import { fontStyles } from "../constants/typography";
-import { changePassword } from "../services/authService";
+import { changePassword } from "../services/user";
 import { validatePassword } from "../utils/validation";
 
 export default function ChangePasswordScreen({ navigation }) {

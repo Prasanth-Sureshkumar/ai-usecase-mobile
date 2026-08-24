@@ -10,7 +10,7 @@ import { screen } from "../constants/spacing";
 import { fontStyles } from "../constants/typography";
 import { REQUEST_STATES } from "../types/auth";
 import { validateEmail } from "../utils/validation";
-import { validatePreLogin } from "../services/authService";
+import { validatePreLogin } from "../services/auth";
 
 export default function PreLoginScreen({ navigation, route }) {
   const [email, setEmail] = useState(route?.params?.email || "");

@@ -9,7 +9,7 @@ import {
 } from "../components/SharedUIComponents";
 import { colors } from "../constants/colors";
 import { fontStyles } from "../constants/typography";
-import { logout } from "../services/authService";
+import { logout } from "../services/user";
 import { IconMap } from "../components/Icons";
 
 export default function PersonalProfileScreen({ navigation }) {

@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { ConfirmationDialog, GlyphBadge } from "../components/SharedUIComponents";
 import { colors } from "../constants/colors";
 import { fontStyles } from "../constants/typography";
-import { deactivateAccount } from "../services/authService";
+import { deactivateAccount } from "../services/user";
 import { IconMap } from "../components/Icons";
 
 export default function DeactivateAccountScreen({ navigation }) {

@@ -7,7 +7,7 @@ import KeyboardAwareScrollScreen from "../components/KeyboardAwareScrollScreen";
 import { colors } from "../constants/colors";
 import { screen } from "../constants/spacing";
 import { fontStyles } from "../constants/typography";
-import { updatePersonalInformation } from "../services/authService";
+import { updatePersonalInformation } from "../services/user";
 import { validateEmail, validateRequired } from "../utils/validation";
 
 export default function EditPersonalInfoScreen({ navigation, route }) {

@@ -13,7 +13,7 @@ import { colors } from "../constants/colors";
 import { screen } from "../constants/spacing";
 import { fontStyles, weights } from "../constants/typography";
 import { REQUEST_STATES } from "../types/auth";
-import { register, sendOtp } from "../services/authService";
+import { register, sendOtp } from "../services/auth";
 import { validateEmail, validateOtp, validatePassword, validateRequired } from "../utils/validation";
 import Icon, { IconMap } from "../components/Icons";
 

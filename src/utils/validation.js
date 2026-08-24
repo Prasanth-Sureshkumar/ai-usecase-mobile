@@ -12,7 +12,8 @@ export function validateRequired(value, label) {
 
 export function validatePassword(value) {
   if (!value) return "Password is required.";
-  if (value.length < 6) return "Password must be at least 6 characters.";
+  if (value.length < 8) return "Password must be at least 8 characters.";
+  if (value.length > 128) return "Password must be 128 characters or less.";
   return "";
 }
 

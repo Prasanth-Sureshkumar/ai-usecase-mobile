@@ -9,8 +9,9 @@ import { colors } from "../constants/colors";
 import { screen } from "../constants/spacing";
 import { fontStyles } from "../constants/typography";
 import { REQUEST_STATES } from "../types/auth";
-import { login } from "../services/authService";
-import { validateEmail, validatePassword } from "../utils/validation";
+import { login } from "../services/auth";
+import { validateEmail, validateRequired } from "../utils/validation";
+import { POST_AUTH_LOGO_URL } from "../constants/branding";
 
 export default function LoginScreen({ navigation, route }) {
   const [email, setEmail] = useState(route?.params?.email || "regentsschool@gmail.com");
@@ -22,7 +23,7 @@ export default function LoginScreen({ navigation, route }) {
   async function submit() {
     const nextErrors = {
       email: validateEmail(email),
-      password: validatePassword(password)
+      password: validateRequired(password, "Password")
     };
     setErrors(nextErrors);
     setApiError("");
@@ -38,7 +39,7 @@ export default function LoginScreen({ navigation, route }) {
       }
       setState(REQUEST_STATES.SUCCESS);
       navigation.replace("PostAuthSplash", {
-        logoUrl: "https://pub-d423d28126b8427881b12df516c6520a.r2.dev/aebfa2c545d0b0763f0c1767f7920695890ba5a3.png"
+        logoUrl: POST_AUTH_LOGO_URL
       });
     } catch (error) {
       setState(REQUEST_STATES.ERROR);

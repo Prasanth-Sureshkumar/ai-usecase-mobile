@@ -10,7 +10,7 @@ import {
 } from "../components/SharedUIComponents";
 import { colors } from "../constants/colors";
 import { fontStyles } from "../constants/typography";
-import { logout } from "../services/authService";
+import { logout } from "../services/user";
 import LinearGradient from "react-native-linear-gradient";
 import { IconMap } from "../components/Icons";
 
