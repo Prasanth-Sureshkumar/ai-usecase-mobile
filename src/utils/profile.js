@@ -14,6 +14,17 @@ export const getDisplayDate = value => {
   const year = date.getFullYear();
   return `${day}/${month}/${year}`;
 };
+const addCacheBust = (uri, version) => {
+  if (!version || !uri.startsWith("http")) return uri;
+  const separator = uri.includes("?") ? "&" : "?";
+  return `${uri}${separator}v=${version}`;
+};
+export const getProfileImageUri = user => {
+  const value = user?.pictureUrl || user?.picture;
+  if (typeof value !== "string" || !value) return "";
+  if (!value.startsWith("http") && !value.startsWith("file://")) return "";
+  return addCacheBust(value, user?.profilePictureVersion);
+};
 export const toApiDate = value => {
   if (!value) return null;
   const date = new Date(value);
@@ -28,7 +39,7 @@ export const calculateProfileCompletion = user => {
     user?.dateOfBirth,
     user?.gender,
     user?.phoneNumber,
-    user?.picture,
+    user?.pictureUrl || user?.picture,
   ];
 
   const completedFields = profileFields.filter(
@@ -45,7 +56,7 @@ export const getMissingProfileFields = user => {
     ["Date of birth", user?.dateOfBirth],
     ["Gender", user?.gender],
     ["Phone number", user?.phoneNumber],
-    ["Profile picture", user?.picture],
+    ["Profile picture", user?.pictureUrl || user?.picture],
   ];
 
   return fields

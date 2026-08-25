@@ -275,9 +275,6 @@ export const PhotoActionSheet = ({
               <MyText style={styles.sheetTitle}>Profile Photo</MyText>
               <SheetAction label="Upload Image" onPress={onUpload} />
               <SheetAction label="Capture Image" onPress={onCapture} />
-              {hasImage ? (
-                <SheetAction label="Remove Image" onPress={onRemove} danger />
-              ) : null}
               <SheetAction label="Cancel" onPress={onCancel} />
             </View>
           </TouchableWithoutFeedback>

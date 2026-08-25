@@ -7,6 +7,7 @@ import Icon, { IconMap } from "./Icons";
 import { useUser } from "../context/UserContext";
 import MyText from "./MyText";
 import { ROUTES } from "../navigation/routes";
+import { getProfileImageUri } from "../utils/profile";
 
 const PLACEHOLDER_PROFILE_IMAGE = require("../assets/images/placeholder.png");
 
@@ -81,10 +82,10 @@ export const BackHeader = ({
 export const MainHeader = ({ logoUrl = MAIN_HEADER_LOGO_URL }) => {
   const navigation = useNavigation();
   const { user } = useUser();
-  const profileImage =
-    typeof user?.picture === "string" && user.picture
-      ? { uri: user.picture }
-      : PLACEHOLDER_PROFILE_IMAGE;
+  const profileImageUri = getProfileImageUri(user);
+  const profileImage = profileImageUri
+    ? { uri: profileImageUri }
+    : PLACEHOLDER_PROFILE_IMAGE;
   const openProfile = () => {
     const parentNavigation = navigation.getParent?.();
     if (parentNavigation) {
@@ -111,7 +112,11 @@ export const MainHeader = ({ logoUrl = MAIN_HEADER_LOGO_URL }) => {
           StyleSheet.compose(styles.profileWrap, pressed && styles.pressed)
         }
       >
-        <Image source={profileImage} style={styles.avatar} />
+        <Image
+          key={profileImageUri}
+          source={profileImage}
+          style={styles.avatar}
+        />
         {/* <View style={styles.badge}>
            <MyText style={styles.badgeText}>80</MyText>
           </View> */}

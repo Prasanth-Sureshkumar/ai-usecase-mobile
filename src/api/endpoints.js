@@ -2,6 +2,7 @@ export const API_BASE = "/api";
 
 export const AUTH_BASE = `${API_BASE}/auth`;
 export const USER_BASE = `${API_BASE}/profile`;
+export const MEDIA_BASE = `${API_BASE}/media`;
 
 export const AUTH_ENDPOINTS = {
   PRE_LOGIN: `${AUTH_BASE}/prelogin`,
@@ -16,4 +17,9 @@ export const USER_ENDPOINTS = {
   PROFILE: (id = "me") => `${USER_BASE}/${id}`,
   PROFILE_ME: `${USER_BASE}/me`,
   CHANGE_PASSWORD: `${USER_BASE}/change-password`,
+};
+
+export const FILE_UPLOAD_ENDPOINTS = {
+  PROFILE_IMAGE: ({ relatedId, relatedType }) =>
+    `${MEDIA_BASE}/file-upload/profile/${relatedId}/${relatedType}`,
 };

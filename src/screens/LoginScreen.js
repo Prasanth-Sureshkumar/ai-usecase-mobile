@@ -15,7 +15,7 @@ import { POST_AUTH_LOGO_URL } from "../constants/branding";
 import MyText from "../components/MyText";
 import { ROUTES } from "../navigation/routes";
 const LoginScreen = ({ navigation, route }) => {
-  const [email, setEmail] = useState(route?.params?.email || " ");
+  const [email, setEmail] = useState(route?.params?.email || "");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");

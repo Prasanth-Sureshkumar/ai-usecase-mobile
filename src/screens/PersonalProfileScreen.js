@@ -4,7 +4,6 @@ import {
   Avatar,
   ActionListRow,
   ConfirmationDialog,
-  PhotoActionSheet,
 } from "../components/SharedUIComponents";
 import { colors } from "../constants/colors";
 import { fontStyles } from "../constants/typography";
@@ -13,7 +12,11 @@ import { IconMap } from "../components/Icons";
 import { useUser } from "../context/UserContext";
 import LoadingIndicator from "../components/LoadingIndicator";
 import MyText from "../components/MyText";
-import { calculateProfileCompletion, getDisplayName } from "../utils/profile";
+import {
+  calculateProfileCompletion,
+  getDisplayName,
+  getProfileImageUri,
+} from "../utils/profile";
 import { ROUTES } from "../navigation/routes";
 
 const PLACEHOLDER_PROFILE_IMAGE = require("../assets/images/placeholder.png");
@@ -21,13 +24,12 @@ const PersonalProfileScreen = ({ navigation }) => {
   const { user, setUser, loading } = useUser();
   const [logoutVisible, setLogoutVisible] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
-  const [photoSheetVisible, setPhotoSheetVisible] = useState(false);
 
   const completion = calculateProfileCompletion(user);
-  const profileImage =
-    typeof user?.picture === "string" && user.picture
-      ? { uri: user.picture }
-      : PLACEHOLDER_PROFILE_IMAGE;
+  const profileImageUri = getProfileImageUri(user);
+  const profileImage = profileImageUri
+    ? { uri: profileImageUri }
+    : PLACEHOLDER_PROFILE_IMAGE;
   const confirmLogout = async () => {
     setLoggingOut(true);
     await logout();
@@ -39,9 +41,6 @@ const PersonalProfileScreen = ({ navigation }) => {
       routes: [{ name: ROUTES.PRE_LOGIN }],
     });
   };
-  const closePhotoSheet = () => {
-    setPhotoSheetVisible(false);
-  };
 
   if (loading && !user) {
     return <LoadingIndicator label="Loading profile..." />;
@@ -51,8 +50,8 @@ const PersonalProfileScreen = ({ navigation }) => {
     <View style={styles.safe}>
       <View style={styles.profileBlock}>
         <PressableAvatar
+          imageKey={profileImageUri}
           source={profileImage}
-          onPress={() => setPhotoSheetVisible(true)}
         />
 
         <View style={styles.profileCopy}>
@@ -105,15 +104,6 @@ const PersonalProfileScreen = ({ navigation }) => {
         color={colors.primary500}
       />
 
-      <PhotoActionSheet
-        visible={photoSheetVisible}
-        hasImage={Boolean(user?.picture)}
-        onUpload={closePhotoSheet}
-        onCapture={closePhotoSheet}
-        onRemove={closePhotoSheet}
-        onCancel={closePhotoSheet}
-      />
-
       <ConfirmationDialog
         visible={logoutVisible}
         title="Logout"
@@ -127,8 +117,8 @@ const PersonalProfileScreen = ({ navigation }) => {
   );
 };
 export default PersonalProfileScreen;
-const PressableAvatar = ({ source, onPress }) => {
-  return <Avatar source={source} size={75} onPress={onPress} />;
+const PressableAvatar = ({ imageKey, source, onPress }) => {
+  return <Avatar key={imageKey} source={source} size={75} onPress={onPress} />;
 };
 
 const styles = StyleSheet.create({

@@ -11,11 +11,34 @@ export const apiClient = axios.create({
   },
 });
 
+const isFormDataPayload = data => {
+  if (!data) return false;
+  if (typeof FormData !== "undefined" && data instanceof FormData) return true;
+  return typeof data.append === "function" && Array.isArray(data._parts);
+};
+
+const removeContentTypeHeader = headers => {
+  if (!headers) return;
+
+  if (typeof headers.delete === "function") {
+    headers.delete("Content-Type");
+    headers.delete("content-type");
+    return;
+  }
+
+  delete headers["Content-Type"];
+  delete headers["content-type"];
+};
+
 apiClient.interceptors.request.use(async config => {
   const token = await getAuthToken();
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  if (isFormDataPayload(config.data)) {
+    removeContentTypeHeader(config.headers);
   }
 
   if (env.DEVELOPER_QUIRKS) {

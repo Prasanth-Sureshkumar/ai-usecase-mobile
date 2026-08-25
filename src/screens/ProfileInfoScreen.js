@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import {
   Avatar,
   ActionListRow,
@@ -7,27 +12,50 @@ import {
   InfoRow,
   PhotoActionSheet,
 } from "../components/SharedUIComponents";
+import ErrorMessage from "../components/ErrorMessage";
 import { colors } from "../constants/colors";
+import {
+  FILE_RELATED_TYPES,
+  PROFILE_IMAGE_MAX_BYTES,
+} from "../constants/fileUploads";
 import { fontStyles } from "../constants/typography";
 import { logout } from "../services/user";
+import { uploadFile } from "../services/fileUploads";
 import LinearGradient from "react-native-linear-gradient";
 import { IconMap } from "../components/Icons";
 import { useUser } from "../context/UserContext";
 import LoadingIndicator from "../components/LoadingIndicator";
-import { getDisplayDate, getDisplayName } from "../utils/profile";
+import {
+  captureImageFromCamera,
+  pickImageFromGallery,
+} from "../utils/imagePicker";
+import {
+  getDisplayDate,
+  getDisplayName,
+  getProfileImageUri,
+} from "../utils/profile";
 import MyText from "../components/MyText";
 import { ROUTES } from "../navigation/routes";
 
 const PLACEHOLDER_PROFILE_IMAGE = require("../assets/images/placeholder.png");
+const PHOTO_SHEET_DISMISS_DELAY_MS = 350;
+
+const waitForPhotoSheetDismiss = () =>
+  new Promise(resolve => {
+    setTimeout(resolve, PHOTO_SHEET_DISMISS_DELAY_MS);
+  });
+
 const ProfileInfoScreen = ({ navigation }) => {
   const { user, setUser, loading } = useUser();
   const [logoutVisible, setLogoutVisible] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [photoSheetVisible, setPhotoSheetVisible] = useState(false);
-  const profileImage =
-    typeof user?.picture === "string" && user.picture
-      ? { uri: user.picture }
-      : PLACEHOLDER_PROFILE_IMAGE;
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
+  const profileImageUri = getProfileImageUri(user);
+  const profileImage = profileImageUri
+    ? { uri: profileImageUri }
+    : PLACEHOLDER_PROFILE_IMAGE;
   const confirmLogout = async () => {
     setLoggingOut(true);
     await logout();
@@ -41,6 +69,73 @@ const ProfileInfoScreen = ({ navigation }) => {
   };
   const closePhotoSheet = () => {
     setPhotoSheetVisible(false);
+  };
+  const handleImagePickerResult = async ({ file, error, cancelled }) => {
+    if (cancelled) return;
+    if (error) {
+      setUploadError(error);
+      return;
+    }
+
+    await uploadProfileImage(file);
+  };
+  const uploadProfileImage = async file => {
+    const relatedId = user?.id;
+    if (!relatedId) {
+      setUploadError(
+        "Unable to upload image because your profile is not loaded.",
+      );
+      return;
+    }
+
+    if (uploading) return;
+
+    setUploading(true);
+    setUploadError(null);
+    const response = await uploadFile({
+      file,
+      relatedId,
+      relatedType: FILE_RELATED_TYPES.USER_PROFILE,
+    });
+    setUploading(false);
+
+    if (!response.success) {
+      setUploadError(response.detail || response.message);
+      return;
+    }
+
+    const uploadedUrl =
+      response.data?.absoluteUrl || response.data?.pictureUrl || file.uri;
+    setUser(current => ({
+      ...current,
+      picture: uploadedUrl,
+      pictureUrl: uploadedUrl,
+      profilePictureVersion: Date.now(),
+    }));
+  };
+  const chooseFromGallery = async () => {
+    if (uploading) return;
+
+    closePhotoSheet();
+    setUploadError(null);
+    await waitForPhotoSheetDismiss();
+    const result = await pickImageFromGallery({
+      fileNamePrefix: "profile",
+      maxBytes: PROFILE_IMAGE_MAX_BYTES,
+    });
+    await handleImagePickerResult(result);
+  };
+  const takePhoto = async () => {
+    if (uploading) return;
+
+    closePhotoSheet();
+    setUploadError(null);
+    await waitForPhotoSheetDismiss();
+    const result = await captureImageFromCamera({
+      fileNamePrefix: "profile",
+      maxBytes: PROFILE_IMAGE_MAX_BYTES,
+    });
+    await handleImagePickerResult(result);
   };
 
   if (loading && !user) {
@@ -57,18 +152,31 @@ const ProfileInfoScreen = ({ navigation }) => {
           end={{ x: 0.5, y: 1 }}
         >
           <View style={styles.hero}>
-            <Avatar
-              source={profileImage}
-              size={141}
-              editable
-              onPress={() => setPhotoSheetVisible(true)}
-            />
+            <View style={styles.avatarWrap}>
+              <Avatar
+                key={profileImageUri}
+                source={profileImage}
+                size={141}
+                editable={!uploading}
+                onPress={
+                  uploading ? undefined : () => setPhotoSheetVisible(true)
+                }
+              />
+              {uploading ? (
+                <View style={styles.uploadOverlay}>
+                  <ActivityIndicator color={colors.white} />
+                </View>
+              ) : null}
+            </View>
           </View>
         </LinearGradient>
 
         <View style={styles.identity}>
           <MyText style={styles.name}>{getDisplayName(user)}</MyText>
           <MyText style={styles.role}>Role: {"parent"}</MyText>
+          {uploadError ? (
+            <ErrorMessage message={uploadError} compact />
+          ) : null}
         </View>
 
         <View style={styles.section}>
@@ -130,10 +238,10 @@ const ProfileInfoScreen = ({ navigation }) => {
       </ScrollView>
 
       <PhotoActionSheet
-        visible={photoSheetVisible}
-        hasImage={Boolean(user?.picture)}
-        onUpload={closePhotoSheet}
-        onCapture={closePhotoSheet}
+        visible={photoSheetVisible && !uploading}
+        hasImage={Boolean(profileImageUri)}
+        onUpload={chooseFromGallery}
+        onCapture={takePhoto}
         onRemove={closePhotoSheet}
         onCancel={() => setPhotoSheetVisible(false)}
       />
@@ -164,6 +272,21 @@ const styles = StyleSheet.create({
     paddingTop: 36,
     alignItems: "center",
     justifyContent: "center",
+  },
+  avatarWrap: {
+    width: 141,
+    height: 141,
+  },
+  uploadOverlay: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    borderRadius: 71,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.38)",
   },
   identity: {
     paddingHorizontal: 14,
