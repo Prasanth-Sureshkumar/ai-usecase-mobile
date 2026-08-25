@@ -2,6 +2,8 @@ export const ROUTES = {
   INITIAL_SPLASH: "InitialSplash",
   PRE_LOGIN: "PreLogin",
   LOGIN: "Login",
+  FORGOT_PASSWORD: "ForgotPassword",
+  RESET_PASSWORD: "ResetPassword",
   REGISTER: "Register",
   REGISTRATION_SUCCESS: "RegistrationSuccess",
   POST_AUTH_SPLASH: "PostAuthSplash",

@@ -19,12 +19,7 @@ apiClient.interceptors.request.use(async config => {
   }
 
   if (env.DEVELOPER_QUIRKS) {
-    console.log("API Request:", {
-      method: config.method?.toUpperCase(),
-      url: `${config.baseURL}${config.url}`,
-      params: config.params,
-      data: config.data,
-    });
+    console.log("API Request:", JSON.stringify(config));
   }
 
   return config;

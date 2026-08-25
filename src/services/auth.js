@@ -3,10 +3,12 @@ import { AUTH_ENDPOINTS } from "../api/endpoints";
 import { saveAuthSession } from "../api/tokenStorage";
 const unwrapResponse = response => {
   const body = response.data || {};
+  const { data, message, success, ...rest } = body;
   return {
-    success: Boolean(body.success),
-    message: body.message,
-    ...(body.data || {}),
+    success: Boolean(success),
+    message,
+    ...rest,
+    ...(data || {}),
   };
 };
 const failure = (error, fallback) => {
@@ -54,11 +56,33 @@ export const login = async (email, password) => {
     });
     const result = unwrapResponse(response);
     await saveAuthSession({
-      accessToken: result.accessToken,
+      accessToken: result.token,
     });
     return result;
   } catch (error) {
     return failure(error, "Login failed. Please try again.");
+  }
+};
+export const forgotPassword = async email => {
+  try {
+    const response = await apiClient.post(AUTH_ENDPOINTS.FORGOT_PASSWORD, {
+      email: email.trim().toLowerCase(),
+    });
+    return unwrapResponse(response);
+  } catch (error) {
+    return failure(error, "Unable to send reset OTP. Please try again.");
+  }
+};
+export const resetPassword = async ({ email, otp, password }) => {
+  try {
+    const response = await apiClient.post(AUTH_ENDPOINTS.RESET_PASSWORD, {
+      email: email.trim().toLowerCase(),
+      otp: otp.trim(),
+      password,
+    });
+    return unwrapResponse(response);
+  } catch (error) {
+    return failure(error, "Unable to reset password. Please try again.");
   }
 };
 export const register = async payload => {

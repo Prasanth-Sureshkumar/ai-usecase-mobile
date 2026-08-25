@@ -6,6 +6,8 @@ import { BackHeader } from "../components/AppHeader";
 import InitialSplashScreen from "../screens/InitialSplashScreen";
 import PreLoginScreen from "../screens/PreLoginScreen";
 import LoginScreen from "../screens/LoginScreen";
+import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
+import ResetPasswordScreen from "../screens/ResetPasswordScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import RegistrationSuccessScreen from "../screens/RegistrationSuccessScreen";
 import PostAuthSplashScreen from "../screens/PostAuthSplashScreen";
@@ -119,6 +121,22 @@ const RootNavigator = () => {
                   style: styles.transparentBackHeader,
                 },
               })
+            }
+          />
+
+          <Stack.Screen
+            name={ROUTES.FORGOT_PASSWORD}
+            component={ForgotPasswordScreen}
+            options={props =>
+              getStackHeaderOptions(props, { fallbackTitle: "Forgot Password" })
+            }
+          />
+
+          <Stack.Screen
+            name={ROUTES.RESET_PASSWORD}
+            component={ResetPasswordScreen}
+            options={props =>
+              getStackHeaderOptions(props, { fallbackTitle: "Reset Password" })
             }
           />
 

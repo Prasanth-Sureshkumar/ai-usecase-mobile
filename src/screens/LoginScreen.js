@@ -90,6 +90,17 @@ const LoginScreen = ({ navigation, route }) => {
           error={errors.password}
         />
 
+        <MyText
+          style={styles.forgotLink}
+          onPress={() =>
+            navigation.navigate(ROUTES.FORGOT_PASSWORD, {
+              email: email.trim(),
+            })
+          }
+        >
+          Forgot Password?
+        </MyText>
+
         {apiError ? <ErrorMessage message={apiError} compact /> : null}
       </View>
       <AppButton
@@ -139,6 +150,12 @@ const styles = StyleSheet.create({
   },
   form: {
     gap: 15,
+  },
+  forgotLink: {
+    alignSelf: "flex-end",
+    color: colors.primary500,
+    textDecorationLine: "underline",
+    ...fontStyles.smRegular,
   },
   button: {
     marginTop: 25,

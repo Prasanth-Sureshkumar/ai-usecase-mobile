@@ -1,5 +1,5 @@
-import { clearAuthSession } from "../api/tokenStorage";
 import { apiClient, getApiErrorMessage } from "../api/client";
+import { clearAuthSession } from "../api/tokenStorage";
 import { USER_ENDPOINTS } from "../api/endpoints";
 
 const delay = (ms = 650) => new Promise(resolve => setTimeout(resolve, ms));
@@ -43,12 +43,21 @@ export const logout = async () => {
   await clearAuthSession();
   return { success: true };
 };
-export const changePassword = async ({ currentPassword, newPassword }) => {
-  await delay();
-  if (!currentPassword || !newPassword) {
-    return { success: false, message: "Please complete both password fields." };
+export const changePassword = async ({
+  currentPassword,
+  newPassword,
+  confirmNewPassword,
+}) => {
+  try {
+    const response = await apiClient.post(USER_ENDPOINTS.CHANGE_PASSWORD, {
+      currentPassword,
+      newPassword,
+      confirmNewPassword,
+    });
+    return unwrapResponse(response);
+  } catch (error) {
+    return failure(error, "Unable to change password.");
   }
-  return { success: true };
 };
 export const deactivateAccount = async () => {
   await delay();

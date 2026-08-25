@@ -9,10 +9,10 @@ export const validateRequired = (value, label) => {
   if (!String(value || "").trim()) return `${label} is required.`;
   return "";
 };
-export const validatePassword = value => {
-  if (!value) return "Password is required.";
-  if (value.length < 8) return "Password must be at least 8 characters.";
-  if (value.length > 128) return "Password must be 128 characters or less.";
+export const validatePassword = (value, label = "Password") => {
+  if (!value) return `${label} is required.`;
+  if (value.length < 8) return `${label} must be at least 8 characters.`;
+  if (value.length > 128) return `${label} must be 128 characters or less.`;
   return "";
 };
 export const validateOtp = value => {

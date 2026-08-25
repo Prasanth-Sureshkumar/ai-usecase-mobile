@@ -9,35 +9,53 @@ import { colors } from "../constants/colors";
 import { screen } from "../constants/spacing";
 import { fontStyles } from "../constants/typography";
 import { changePassword } from "../services/user";
-import { validatePassword } from "../utils/validation";
+import { validatePassword, validateRequired } from "../utils/validation";
 import MyText from "../components/MyText";
 const ChangePasswordScreen = ({ navigation }) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
+  const [showConfirmNew, setShowConfirmNew] = useState(false);
   const [errors, setErrors] = useState({});
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [successVisible, setSuccessVisible] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const requestChange = () => {
     const nextErrors = {
-      currentPassword: validatePassword(currentPassword).replace(
-        "Password",
-        "Current password",
-      ),
-      newPassword: validatePassword(newPassword).replace(
-        "Password",
+      currentPassword: validateRequired(currentPassword, "Current password"),
+      newPassword: validatePassword(
+        newPassword,
         "New password",
       ),
+      confirmNewPassword: validatePassword(
+        confirmNewPassword,
+        "Confirm password",
+      ),
     };
+
+    if (!nextErrors.confirmNewPassword && newPassword !== confirmNewPassword) {
+      nextErrors.confirmNewPassword =
+        "New password and confirm password do not match.";
+    }
+
+    if (!nextErrors.newPassword && currentPassword === newPassword) {
+      nextErrors.newPassword =
+        "New password must be different from current password.";
+    }
+
     setErrors(nextErrors);
     if (Object.values(nextErrors).some(Boolean)) return;
     setConfirmVisible(true);
   };
   const submitChange = async () => {
     setSubmitting(true);
-    const response = await changePassword({ currentPassword, newPassword });
+    const response = await changePassword({
+      currentPassword,
+      newPassword,
+      confirmNewPassword,
+    });
     setSubmitting(false);
     setConfirmVisible(false);
 
@@ -49,6 +67,9 @@ const ChangePasswordScreen = ({ navigation }) => {
       return;
     }
 
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmNewPassword("");
     setSuccessVisible(true);
   };
 
@@ -97,6 +118,28 @@ const ChangePasswordScreen = ({ navigation }) => {
               setErrors(current => ({ ...current, newPassword: "", form: "" }));
             }}
             error={errors.newPassword}
+          />
+
+          <AppInput
+            label="Re-enter New Password"
+            placeholder="Re-enter new password"
+            value={confirmNewPassword}
+            secureTextEntry={!showConfirmNew}
+            rightElement={
+              <PasswordToggle
+                visible={showConfirmNew}
+                onPress={() => setShowConfirmNew(value => !value)}
+              />
+            }
+            onChangeText={value => {
+              setConfirmNewPassword(value);
+              setErrors(current => ({
+                ...current,
+                confirmNewPassword: "",
+                form: "",
+              }));
+            }}
+            error={errors.confirmNewPassword}
           />
 
           {errors.form ? (
