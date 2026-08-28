@@ -5,12 +5,26 @@ import ErrorMessage from "../components/ErrorMessage";
 import LoadingIndicator from "../components/LoadingIndicator";
 import { colors } from "../constants/colors";
 import { isValidUrl } from "../utils/validation";
+import { getAuthToken } from "../api/tokenStorage";
+
+const WEB_APP_TOKEN_KEY = "app-x-token";
+
+const createWebAppTokenScript = token => `
+  (function() {
+    try {
+      window.localStorage.setItem(${JSON.stringify(WEB_APP_TOKEN_KEY)}, ${JSON.stringify(token)});
+    } catch (error) {}
+  })();
+  true;
+`;
+
 const DynamicWebViewScreen = props => {
-  const { url, active = true } = props.route?.params ?? props;
+  const { url, active = true, authenticated = false } = props.route?.params ?? props;
   const webViewRef = useRef(null);
   const [canGoBack, setCanGoBack] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
+  const [authToken, setAuthToken] = useState("");
+  const [tokenLoading, setTokenLoading] = useState(authenticated);
 
   useEffect(() => {
     if (Platform.OS !== "android" || !active) return undefined;
@@ -29,10 +43,50 @@ const DynamicWebViewScreen = props => {
     return () => subscription.remove();
   }, [active, canGoBack]);
 
+  useEffect(() => {
+    let alive = true;
+
+    const loadToken = async () => {
+      if (!authenticated) {
+        setAuthToken("");
+        setTokenLoading(false);
+        return;
+      }
+
+      setTokenLoading(true);
+      const token = await getAuthToken();
+      if (!alive) return;
+      setAuthToken(token || "");
+      setTokenLoading(false);
+    };
+
+    loadToken();
+    return () => {
+      alive = false;
+    };
+  }, [authenticated]);
+
+  const webAppTokenScript = authToken
+    ? createWebAppTokenScript(authToken)
+    : undefined;
+
+  useEffect(() => {
+    if (!authenticated || !webAppTokenScript || !webViewRef.current) return;
+    webViewRef.current.injectJavaScript(webAppTokenScript);
+  }, [authenticated, webAppTokenScript]);
+
   if (!isValidUrl(url)) {
     return (
       <View style={styles.errorWrap}>
         <ErrorMessage message="This menu has an invalid URL." compact />
+      </View>
+    );
+  }
+
+  if (tokenLoading) {
+    return (
+      <View style={styles.loader}>
+        <LoadingIndicator label="Loading..." />
       </View>
     );
   }
@@ -42,13 +96,14 @@ const DynamicWebViewScreen = props => {
       <WebView
         ref={webViewRef}
         source={{ uri: url }}
+        injectedJavaScriptBeforeContentLoaded={
+          authenticated ? webAppTokenScript : undefined
+        }
+        injectedJavaScript={authenticated ? webAppTokenScript : undefined}
         onLoadStart={() => {
-          setLoading(true);
           setLoadError("");
         }}
-        onLoadEnd={() => setLoading(false)}
         onError={() => {
-          setLoading(false);
           setLoadError(
             "Unable to load this page. Check your internet connection and try again.",
           );
@@ -64,14 +119,12 @@ const DynamicWebViewScreen = props => {
           return true;
         }}
         startInLoadingState
-        renderLoading={() => <LoadingIndicator label="Loading..." />}
+        renderLoading={() => (
+          <View style={styles.loader}>
+            <LoadingIndicator label="Loading..." />
+          </View>
+        )}
       />
-
-      {loading ? (
-        <View style={styles.loader}>
-          <LoadingIndicator label="Loading..." />
-        </View>
-      ) : null}
       {loadError ? (
         <View style={styles.errorOverlay}>
           <ErrorMessage message={loadError} compact />
@@ -90,6 +143,8 @@ const styles = StyleSheet.create({
   loader: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: colors.white,
+    justifyContent: "center",
+    alignItems: "center",
   },
   errorOverlay: {
     ...StyleSheet.absoluteFillObject,

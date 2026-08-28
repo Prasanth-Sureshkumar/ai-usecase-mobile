@@ -5,7 +5,8 @@ export const mockMenus = [
     id: "my-docs",
     name: "My Docs",
     icon: IconMap.document,
-    url: "https://www.youtube.com",
+    url: "https://app-stage.thearkofrevival.com/my-organizations",
+    authenticated: true,
   },
   {
     id: "regent-ai",

@@ -1,5 +1,5 @@
 module.exports = function babelConfig(api) {
-  api.cache(true);
+  api.cache(false);
   return {
     presets: ["module:@react-native/babel-preset"],
     plugins: [

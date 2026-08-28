@@ -11,7 +11,7 @@ import { getMenus } from "../services/menuService";
 import DynamicWebViewScreen from "./DynamicWebViewScreen";
 import MoreScreen from "./MoreScreen";
 
-const MAX_VISIBLE_DYNAMIC_ITEMS = 2;
+const MAX_VISIBLE_DYNAMIC_ITEMS = 5;
 const MainTab = createBottomTabNavigator();
 const renderMainHeader = () => {
   return <MainHeader logoUrl={MAIN_HEADER_LOGO_URL} />;
@@ -31,6 +31,7 @@ const MainTabScreen = ({ route }) => {
     <DynamicWebViewScreen
       title={item.name}
       url={item.url}
+      authenticated={!!item.authenticated}
       active={Platform.OS === "android" ? isFocused : true}
     />
   );

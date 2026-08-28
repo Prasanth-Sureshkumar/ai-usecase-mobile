@@ -16,7 +16,8 @@ const moreItems = [
     navigateTo: ROUTES.IN_APP_BROWSER,
     params: {
       title: "Admin Panel",
-      url: "https://www.youtube.com",
+      url: "https://app-stage.thearkofrevival.com/my-organizations",
+      authenticated: true,
       active: true,
     },
   },
