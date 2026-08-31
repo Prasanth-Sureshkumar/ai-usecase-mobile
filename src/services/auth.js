@@ -56,7 +56,7 @@ export const login = async (email, password) => {
     });
     const result = unwrapResponse(response);
     await saveAuthSession({
-      accessToken: result.token,
+      accessToken: result.token || result.accessToken,
     });
     return result;
   } catch (error) {
@@ -96,7 +96,7 @@ export const register = async payload => {
     });
     const result = unwrapResponse(response);
     await saveAuthSession({
-      accessToken: result.accessToken,
+      accessToken: result.accessToken || result.token,
     });
     return result;
   } catch (error) {

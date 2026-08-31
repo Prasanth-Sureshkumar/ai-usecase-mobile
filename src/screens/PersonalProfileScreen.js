@@ -10,6 +10,7 @@ import { fontStyles } from "../constants/typography";
 import { logout } from "../services/user";
 import { IconMap } from "../components/Icons";
 import { useUser } from "../context/UserContext";
+import { useAppConfig, useTheme } from "../context/AppConfigContext";
 import LoadingIndicator from "../components/LoadingIndicator";
 import MyText from "../components/MyText";
 import {
@@ -22,6 +23,8 @@ import { ROUTES } from "../navigation/routes";
 const PLACEHOLDER_PROFILE_IMAGE = require("../assets/images/placeholder.png");
 const PersonalProfileScreen = ({ navigation }) => {
   const { user, setUser, loading } = useUser();
+  const { clearAppConfig } = useAppConfig();
+  const { colors: themeColors } = useTheme();
   const [logoutVisible, setLogoutVisible] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
@@ -34,6 +37,7 @@ const PersonalProfileScreen = ({ navigation }) => {
     setLoggingOut(true);
     await logout();
     setUser(null);
+    clearAppConfig();
     setLoggingOut(false);
     setLogoutVisible(false);
     navigation.reset({
@@ -47,7 +51,7 @@ const PersonalProfileScreen = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.safe}>
+    <View style={[styles.safe, { backgroundColor: themeColors.white }]}>
       <View style={styles.profileBlock}>
         <PressableAvatar
           imageKey={profileImageUri}
@@ -55,11 +59,14 @@ const PersonalProfileScreen = ({ navigation }) => {
         />
 
         <View style={styles.profileCopy}>
-          <MyText style={styles.name} numberOfLines={1}>
+          <MyText
+            style={[styles.name, { color: themeColors.neutrals900 }]}
+            numberOfLines={1}
+          >
             {getDisplayName(user)}
           </MyText>
           <MyText
-            style={styles.editLink}
+            style={[styles.editLink, { color: themeColors.primary500 }]}
             onPress={() =>
               navigation.navigate(ROUTES.PROFILE_INFO, {
                 title: getDisplayName(user),
@@ -69,28 +76,47 @@ const PersonalProfileScreen = ({ navigation }) => {
           >
             Edit Profile
           </MyText>
-          <View style={styles.progressTrack}>
+          <View
+            style={[
+              styles.progressTrack,
+              { backgroundColor: themeColors.neutrals100 },
+            ]}
+          >
             <View
-              style={StyleSheet.compose(styles.progressFill, {
-                width: `${completion}%`,
-              })}
+              style={[
+                styles.progressFill,
+                {
+                  backgroundColor: themeColors.primary500,
+                  width: `${completion}%`,
+                },
+              ]}
             />
           </View>
           <View style={styles.progressLabels}>
-            <MyText style={styles.progressText}>Complete your profile</MyText>
-            <MyText style={styles.progressText}>{completion}%</MyText>
+            <MyText
+              style={[styles.progressText, { color: themeColors.neutrals500 }]}
+            >
+              Complete your profile
+            </MyText>
+            <MyText
+              style={[styles.progressText, { color: themeColors.neutrals500 }]}
+            >
+              {completion}%
+            </MyText>
           </View>
         </View>
       </View>
 
-      <View style={styles.divider} />
+      <View
+        style={[styles.divider, { backgroundColor: themeColors.neutrals100 }]}
+      />
 
       <ActionListRow
         title="Settings"
         iconName={IconMap.gear}
         iconSize={20}
         outerRadius={20}
-        backgroundColor={"transparent"}
+        backgroundColor={themeColors.transparent}
         onPress={() => navigation.navigate(ROUTES.SETTINGS)}
       />
 
@@ -99,9 +125,9 @@ const PersonalProfileScreen = ({ navigation }) => {
         iconName={IconMap.exitIcon}
         iconSize={20}
         outerRadius={20}
-        backgroundColor={"transparent"}
+        backgroundColor={themeColors.transparent}
         onPress={() => setLogoutVisible(true)}
-        color={colors.primary500}
+        color={themeColors.primary500}
       />
 
       <ConfirmationDialog

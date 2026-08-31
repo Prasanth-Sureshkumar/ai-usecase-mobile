@@ -1,5 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
-import { BackHandler, Linking, Platform, StyleSheet, View } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  BackHandler,
+  Linking,
+  Platform,
+  StyleSheet,
+  View,
+} from "react-native";
 import { WebView } from "react-native-webview";
 import ErrorMessage from "../components/ErrorMessage";
 import LoadingIndicator from "../components/LoadingIndicator";
@@ -8,6 +14,9 @@ import { isValidUrl } from "../utils/validation";
 import { getAuthToken } from "../api/tokenStorage";
 
 const WEB_APP_TOKEN_KEY = "app-x-token";
+const WEBVIEW_MESSAGE_TYPES = {
+  DOWNLOAD_DOCUMENT: "REGENT_DOWNLOAD_DOCUMENT",
+};
 
 const createWebAppTokenScript = token => `
   (function() {
@@ -18,9 +27,22 @@ const createWebAppTokenScript = token => `
   true;
 `;
 
+const parseWebViewMessage = value => {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
+};
+
+const openDownload = ({ url, fileName, title }) => {
+  return Linking.openURL(url);
+};
+
 const DynamicWebViewScreen = props => {
   const { url, active = true, authenticated = false } = props.route?.params ?? props;
   const webViewRef = useRef(null);
+  const pendingDownloadUrlRef = useRef("");
   const [canGoBack, setCanGoBack] = useState(false);
   const [loadError, setLoadError] = useState("");
   const [authToken, setAuthToken] = useState("");
@@ -75,6 +97,25 @@ const DynamicWebViewScreen = props => {
     webViewRef.current.injectJavaScript(webAppTokenScript);
   }, [authenticated, webAppTokenScript]);
 
+  const handleDocumentDownload = useCallback(payload => {
+    if (!payload?.url) return;
+
+    pendingDownloadUrlRef.current = payload.url;
+    openDownload({
+      url: payload.url,
+    }).catch(() => {
+      pendingDownloadUrlRef.current = "";
+    });
+  }, []);
+
+  const handleMessage = useCallback(event => {
+    const message = parseWebViewMessage(event.nativeEvent?.data);
+
+    if (message?.type === WEBVIEW_MESSAGE_TYPES.DOWNLOAD_DOCUMENT) {
+      handleDocumentDownload(message.payload);
+    }
+  }, [handleDocumentDownload]);
+
   if (!isValidUrl(url)) {
     return (
       <View style={styles.errorWrap}>
@@ -109,7 +150,25 @@ const DynamicWebViewScreen = props => {
           );
         }}
         onNavigationStateChange={event => setCanGoBack(event.canGoBack)}
+        onMessage={handleMessage}
+        onFileDownload={event => {
+          const downloadUrl = event.nativeEvent?.downloadUrl;
+          if (downloadUrl) {
+            pendingDownloadUrlRef.current = downloadUrl;
+            openDownload({
+              url: downloadUrl,
+              title: event.nativeEvent?.title,
+            }).catch(() => {
+              pendingDownloadUrlRef.current = "";
+            });
+          }
+        }}
         onShouldStartLoadWithRequest={request => {
+          if (request.url === pendingDownloadUrlRef.current) {
+            pendingDownloadUrlRef.current = "";
+            return false;
+          }
+
           const isExternal =
             !request.url.startsWith(url) && request.navigationType === "click";
           if (isExternal && /^https?:\/\//.test(request.url)) {

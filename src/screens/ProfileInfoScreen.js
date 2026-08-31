@@ -14,6 +14,7 @@ import {
 } from "../components/SharedUIComponents";
 import ErrorMessage from "../components/ErrorMessage";
 import { colors } from "../constants/colors";
+import { useAppConfig, useTheme } from "../context/AppConfigContext";
 import {
   FILE_RELATED_TYPES,
   PROFILE_IMAGE_MAX_BYTES,
@@ -47,6 +48,8 @@ const waitForPhotoSheetDismiss = () =>
 
 const ProfileInfoScreen = ({ navigation }) => {
   const { user, setUser, loading } = useUser();
+  const { user: appConfigUser, clearAppConfig } = useAppConfig();
+  const { colors: themeColors } = useTheme();
   const [logoutVisible, setLogoutVisible] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [photoSheetVisible, setPhotoSheetVisible] = useState(false);
@@ -56,10 +59,12 @@ const ProfileInfoScreen = ({ navigation }) => {
   const profileImage = profileImageUri
     ? { uri: profileImageUri }
     : PLACEHOLDER_PROFILE_IMAGE;
+  const roleName = appConfigUser?.role?.name || "-";
   const confirmLogout = async () => {
     setLoggingOut(true);
     await logout();
     setUser(null);
+    clearAppConfig();
     setLoggingOut(false);
     setLogoutVisible(false);
     navigation.reset({
@@ -143,10 +148,10 @@ const ProfileInfoScreen = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.safe}>
+    <View style={[styles.safe, { backgroundColor: themeColors.white }]}>
       <ScrollView contentContainerStyle={styles.content}>
         <LinearGradient
-          colors={["#EBF1FF", "rgba(235, 241, 255, 0)"]}
+          colors={[themeColors.primary100, "rgba(235, 241, 255, 0)"]}
           locations={[0, 1]}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
@@ -164,7 +169,7 @@ const ProfileInfoScreen = ({ navigation }) => {
               />
               {uploading ? (
                 <View style={styles.uploadOverlay}>
-                  <ActivityIndicator color={colors.white} />
+                  <ActivityIndicator color={themeColors.white} />
                 </View>
               ) : null}
             </View>
@@ -172,8 +177,12 @@ const ProfileInfoScreen = ({ navigation }) => {
         </LinearGradient>
 
         <View style={styles.identity}>
-          <MyText style={styles.name}>{getDisplayName(user)}</MyText>
-          <MyText style={styles.role}>Role: {"parent"}</MyText>
+          <MyText style={[styles.name, { color: themeColors.neutrals900 }]}>
+            {getDisplayName(user)}
+          </MyText>
+            <MyText style={[styles.role, { color: themeColors.neutrals900 }]}>
+              Role: {roleName}
+            </MyText>
           {uploadError ? (
             <ErrorMessage message={uploadError} compact />
           ) : null}
@@ -229,8 +238,8 @@ const ProfileInfoScreen = ({ navigation }) => {
             iconName={IconMap.exitIcon}
             iconSize={20}
             outerRadius={20}
-            backgroundColor={colors.transparent}
-            color={colors.red500}
+            backgroundColor={themeColors.transparent}
+            color={themeColors.red500}
             showChevron={false}
             onPress={() => setLogoutVisible(true)}
           />

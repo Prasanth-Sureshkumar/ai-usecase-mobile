@@ -22,7 +22,7 @@ const RegisterScreen = ({ navigation, route }) => {
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
-    email: route?.params?.email || "regentsschool@gmail.com",
+    email: route?.params?.email || "",
     otp: "",
     password: "",
   });

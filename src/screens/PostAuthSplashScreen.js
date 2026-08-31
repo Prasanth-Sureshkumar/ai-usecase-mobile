@@ -1,54 +1,91 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import AppLogo from "../components/AppLogo";
-import { colors } from "../constants/colors";
+import AppButton from "../components/AppButton";
+import ErrorMessage from "../components/ErrorMessage";
+import LoadingIndicator from "../components/LoadingIndicator";
 import { POST_AUTH_SPLASH_DURATION } from "../constants/timing";
-import { clearAuthSession } from "../api/tokenStorage";
+import { DEFAULT_MINI_LOGO_URL } from "../constants/branding";
+import { useAppConfig, useTheme } from "../context/AppConfigContext";
 import { useUser } from "../context/UserContext";
 import { ROUTES } from "../navigation/routes";
-const PostAuthSplashScreen = ({ navigation, route }) => {
-  const { refreshUser } = useUser();
 
-  useEffect(() => {
-    let alive = true;
-    const prepareAuthenticatedApp = async () => {
-      const response = await refreshUser();
-      const remainingDelay = new Promise(resolve =>
-        setTimeout(resolve, POST_AUTH_SPLASH_DURATION),
-      );
-      await remainingDelay;
-      if (!alive) return;
+const PostAuthSplashScreen = ({ navigation }) => {
+  const { organization, initialized, refreshAppConfig, clearAppConfig } =
+    useAppConfig();
+  const { refreshUser, setUser } = useUser();
+  const { colors } = useTheme();
+  const [error, setError] = useState("");
 
-      if (!response.success) {
-        await clearAuthSession();
-        navigation.reset({
-          index: 0,
-          routes: [{ name: ROUTES.PRE_LOGIN }],
-        });
+  const resetToLogin = useCallback(async () => {
+    clearAppConfig();
+    setUser(null);
+    navigation.reset({
+      index: 0,
+      routes: [{ name: ROUTES.PRE_LOGIN }],
+    });
+  }, [clearAppConfig, navigation, setUser]);
+
+  const prepareAuthenticatedApp = useCallback(async () => {
+    setError("");
+    const response = await refreshAppConfig();
+
+    if (!response.success) {
+      if (response.authExpired) {
+        await resetToLogin();
         return;
       }
 
-      navigation.reset({
-        index: 0,
-        routes: [{ name: ROUTES.MAIN_APP }],
-      });
+      setError(response.message || "Unable to initialize the app.");
+      return;
+    }
+
+    await refreshUser();
+    await new Promise(resolve => setTimeout(resolve, POST_AUTH_SPLASH_DURATION));
+
+    navigation.reset({
+      index: 0,
+      routes: [{ name: ROUTES.MAIN_APP }],
+    });
+  }, [navigation, refreshAppConfig, refreshUser, resetToLogin]);
+
+  useEffect(() => {
+    let alive = true;
+
+    const run = async () => {
+      await prepareAuthenticatedApp();
+      if (!alive) return;
     };
 
-    prepareAuthenticatedApp();
+    run();
 
     return () => {
       alive = false;
     };
-  }, [navigation, refreshUser]);
+  }, [prepareAuthenticatedApp]);
 
   return (
-    <View style={styles.container}>
-      <AppLogo
-        size={112}
-        variant="crest"
-        showName
-        logoUrl={route.params?.logoUrl}
-      />
+    <View
+      style={StyleSheet.compose(styles.container, {
+        backgroundColor: colors.white,
+      })}
+    >
+      {initialized ? (
+        <AppLogo
+          size={112}
+          variant="crest"
+          showName
+          logoUrl={organization?.miniUrl || DEFAULT_MINI_LOGO_URL}
+        />
+      ) : (
+        <LoadingIndicator label="Initializing..." />
+      )}
+      {error ? (
+        <View style={styles.retryBlock}>
+          <ErrorMessage message={error} compact />
+          <AppButton label="Retry" onPress={prepareAuthenticatedApp} />
+        </View>
+      ) : null}
     </View>
   );
 };
@@ -59,6 +96,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.white,
+  },
+  retryBlock: {
+    width: "100%",
+    paddingHorizontal: 28,
+    marginTop: 24,
+    gap: 14,
   },
 });

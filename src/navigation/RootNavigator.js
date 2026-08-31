@@ -239,7 +239,7 @@ const RootNavigator = () => {
             component={OrgnizationAbout}
             options={props =>
               getStackHeaderOptions(props, {
-                fallbackTitle: "About Regent",
+                fallbackTitle: "About Organization",
               })
             }
           />

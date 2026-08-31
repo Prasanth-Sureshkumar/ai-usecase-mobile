@@ -11,7 +11,6 @@ import { fontStyles } from "../constants/typography";
 import { REQUEST_STATES } from "../types/auth";
 import { login } from "../services/auth";
 import { validateEmail, validateRequired } from "../utils/validation";
-import { POST_AUTH_LOGO_URL } from "../constants/branding";
 import MyText from "../components/MyText";
 import { ROUTES } from "../navigation/routes";
 const LoginScreen = ({ navigation, route }) => {
@@ -43,9 +42,7 @@ const LoginScreen = ({ navigation, route }) => {
         return;
       }
       setState(REQUEST_STATES.SUCCESS);
-      navigation.replace(ROUTES.POST_AUTH_SPLASH, {
-        logoUrl: POST_AUTH_LOGO_URL,
-      });
+      navigation.replace(ROUTES.POST_AUTH_SPLASH);
     } catch (error) {
       setState(REQUEST_STATES.ERROR);
       setApiError("Unable to login right now. Please try again.");
@@ -60,7 +57,7 @@ const LoginScreen = ({ navigation, route }) => {
       <AppLogo size={112} style={styles.logo} />
       <View style={styles.copyBlock}>
         <MyText style={styles.title}>Welcome Back!</MyText>
-        <MyText style={styles.subtitle}>Sign in to continue to App Name</MyText>
+        <MyText style={styles.subtitle}>Sign in to continue</MyText>
       </View>
       <View style={styles.form}>
         <AppInput

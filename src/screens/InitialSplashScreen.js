@@ -4,7 +4,6 @@ import AppLogo from "../components/AppLogo";
 import { colors } from "../constants/colors";
 import { INITIAL_SPLASH_DURATION } from "../constants/timing";
 import { getAuthToken } from "../api/tokenStorage";
-import { POST_AUTH_LOGO_URL } from "../constants/branding";
 import { ROUTES } from "../navigation/routes";
 const InitialSplashScreen = ({ navigation }) => {
   useEffect(() => {
@@ -19,10 +18,7 @@ const InitialSplashScreen = ({ navigation }) => {
           index: 0,
           routes: [
             token
-              ? {
-                  name: ROUTES.POST_AUTH_SPLASH,
-                  params: { logoUrl: POST_AUTH_LOGO_URL },
-                }
+              ? { name: ROUTES.POST_AUTH_SPLASH }
               : { name: ROUTES.PRE_LOGIN },
           ],
         });

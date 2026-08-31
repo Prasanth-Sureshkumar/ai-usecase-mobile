@@ -3,6 +3,7 @@ export const API_BASE = "/api";
 export const AUTH_BASE = `${API_BASE}/auth`;
 export const USER_BASE = `${API_BASE}/profile`;
 export const MEDIA_BASE = `${API_BASE}/media`;
+export const APP_INIT_ENDPOINT = `${API_BASE}/init`;
 
 export const AUTH_ENDPOINTS = {
   PRE_LOGIN: `${AUTH_BASE}/prelogin`,

@@ -2,33 +2,9 @@ import React from "react";
 import { Linking, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Icon, { IconMap } from "../components/Icons";
 import MyText from "../components/MyText";
-import { colors } from "../constants/colors";
+import { useAppConfig, useTheme } from "../context/AppConfigContext";
 import { fontStyles } from "../constants/typography";
-import { organization } from "../mocks/organization";
-
-const CONTACT_ROWS = [
-  {
-    id: "phone",
-    icon: IconMap.phone,
-    value: organization.contact.phone,
-  },
-  {
-    id: "email",
-    icon: IconMap.message,
-    value: organization.contact.email,
-  },
-  {
-    id: "website",
-    icon: IconMap.web,
-    value: organization.contact.website,
-    isLink: true,
-  },
-  {
-    id: "location",
-    icon: IconMap.location,
-    value: organization.contact.location,
-  },
-];
+import { normalizeUrl } from "../utils/url";
 
 const actions = [
   {
@@ -38,34 +14,74 @@ const actions = [
   },
 ];
 
-const fallbackValue = value => value || "-";
-
 const openWebsite = url => {
   if (!url) return;
-  Linking.openURL(url).catch(() => {});
+  Linking.openURL(normalizeUrl(url)).catch(() => {});
 };
 
 const OrgnizationAbout = () => {
+  const { organization } = useAppConfig();
+  const { colors } = useTheme();
+  const locationText = [
+    organization?.location?.address,
+    organization?.location?.city,
+    organization?.location?.stateProvince,
+    organization?.location?.postalCode,
+    organization?.location?.country,
+  ]
+    .filter(Boolean)
+    .join(", ");
+  const contactRows = [
+    {
+      id: "phone",
+      icon: IconMap.phone,
+      value: organization?.phoneNumber,
+    },
+    {
+      id: "email",
+      icon: IconMap.message,
+      value: organization?.email,
+    },
+    {
+      id: "website",
+      icon: IconMap.web,
+      value: organization?.website,
+      isLink: true,
+    },
+    {
+      id: "location",
+      icon: IconMap.location,
+      value: locationText,
+    },
+  ].filter(row => Boolean(row.value));
+
   return (
-    <View style={styles.safe}>
+    <View style={[styles.safe, { backgroundColor: colors.white }]}>
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.section}>
-          <MyText style={styles.sectionTitle}>Contact</MyText>
-          <View style={styles.rows}>
-            {CONTACT_ROWS.map(row => (
-              <ContactRow key={row.id} item={row} />
-            ))}
+
+        {contactRows.length ? (
+          <View style={styles.section}>
+            <MyText style={[styles.sectionTitle, { color: colors.neutrals900 }]}>
+              Contact
+            </MyText>
+            <View style={styles.rows}>
+              {contactRows.map(row => (
+                <ContactRow key={row.id} item={row} colors={colors} />
+              ))}
+            </View>
           </View>
-        </View>
+        ) : null}
 
         <View style={styles.section}>
-          <MyText style={styles.sectionTitle}>Actions</MyText>
+          <MyText style={[styles.sectionTitle, { color: colors.neutrals900 }]}>
+            Actions
+          </MyText>
           <View style={styles.rows}>
             {actions.map(action => (
-              <ActionRow key={action.id} action={action} />
+              <ActionRow key={action.id} action={action} colors={colors} />
             ))}
           </View>
         </View>
@@ -74,11 +90,12 @@ const OrgnizationAbout = () => {
   );
 };
 
-const ContactRow = ({ item }) => {
-  const textStyle = StyleSheet.compose(
+const ContactRow = ({ item, colors }) => {
+  const textStyle = [
     styles.rowText,
+    { color: item.isLink ? colors.primary500 : colors.neutrals900 },
     item.isLink && styles.linkText,
-  );
+  ];
 
   return (
     <Pressable
@@ -90,13 +107,13 @@ const ContactRow = ({ item }) => {
     >
       <Icon name={item.icon} size={20} color={colors.neutrals900} />
       <MyText style={textStyle} numberOfLines={2}>
-        {fallbackValue(item.value)}
+        {item.value}
       </MyText>
     </Pressable>
   );
 };
 
-const ActionRow = ({ action }) => {
+const ActionRow = ({ action, colors }) => {
   const color = action.destructive ? colors.red500 : colors.neutrals900;
 
   return (
@@ -121,7 +138,6 @@ export default OrgnizationAbout;
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   content: {
     flexGrow: 1,
@@ -131,9 +147,15 @@ const styles = StyleSheet.create({
     padding: 14,
   },
   sectionTitle: {
-    color: colors.neutrals900,
     ...fontStyles.lgBold,
     marginBottom: 14,
+  },
+  organizationName: {
+    ...fontStyles.lgBold,
+  },
+  description: {
+    ...fontStyles.smRegular,
+    marginTop: 8,
   },
   rows: {
     // paddingVertical: 10,
@@ -147,11 +169,10 @@ const styles = StyleSheet.create({
   },
   rowText: {
     flex: 1,
-    color: colors.neutrals900,
     ...fontStyles.smRegular,
   },
   linkText: {
-    color: colors.primary500,
+    textDecorationLine: "underline",
   },
   pressed: {
     opacity: 0.76,

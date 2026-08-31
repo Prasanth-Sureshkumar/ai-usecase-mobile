@@ -9,16 +9,21 @@ import { fontStyles } from "../constants/typography";
 import { deactivateAccount } from "../services/user";
 import { IconMap } from "../components/Icons";
 import { useUser } from "../context/UserContext";
+import { useAppConfig, useTheme } from "../context/AppConfigContext";
 import MyText from "../components/MyText";
 import { ROUTES } from "../navigation/routes";
 const DeactivateAccountScreen = ({ navigation }) => {
   const { setUser } = useUser();
+  const { clearAppConfig, organization } = useAppConfig();
+  const { colors: themeColors } = useTheme();
+  const organizationName = organization?.name || "your organization";
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const confirmDeactivate = async () => {
     setSubmitting(true);
     await deactivateAccount();
     setUser(null);
+    clearAppConfig();
     setSubmitting(false);
     setConfirmVisible(false);
     navigation.reset({
@@ -28,22 +33,24 @@ const DeactivateAccountScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.safe}>
+    <View style={[styles.safe, { backgroundColor: themeColors.white }]}>
       <View style={styles.content}>
         <View style={styles.centerCopy}>
           <GlyphBadge
             iconName={IconMap.dustbin}
-            color={colors.primary500}
+            color={themeColors.primary500}
             outerRadius={95}
-            backgroundColor={colors.primary100}
+            backgroundColor={themeColors.primary100}
           />
-          <MyText style={styles.title}>Deactivate Your Account?</MyText>
-          <MyText style={styles.message}>
-            You are about to start the process of deactivating your Regents
-            School account. Your profile name and information will no longer be
-            viewable within the Regents School app.
+          <MyText style={[styles.title, { color: themeColors.neutrals900 }]}>
+            Deactivate Your Account?
           </MyText>
-          <MyText style={styles.message}>
+          <MyText style={[styles.message, { color: themeColors.neutrals900 }]}>
+            You are about to start the process of deactivating your{" "}
+            {organizationName} account. Your profile name and information will
+            no longer be viewable within the app.
+          </MyText>
+          <MyText style={[styles.message, { color: themeColors.neutrals900 }]}>
             You will, however, be able to retrieve your data upon logging back
             in within 90 days of willingly or accidentally deactivating your
             account.
@@ -56,21 +63,33 @@ const DeactivateAccountScreen = ({ navigation }) => {
             onPress={() => setConfirmVisible(true)}
             style={({ pressed }) =>
               StyleSheet.compose(
-                styles.continueButton,
+                [
+                  styles.continueButton,
+                  { backgroundColor: themeColors.redText },
+                ],
                 pressed && styles.pressed,
               )
             }
           >
-            <MyText style={styles.continueText}>Continue</MyText>
+            <MyText style={[styles.continueText, { color: themeColors.white }]}>
+              Continue
+            </MyText>
           </Pressable>
           <Pressable
             disabled={submitting}
             onPress={() => navigation.goBack()}
             style={({ pressed }) =>
-              StyleSheet.compose(styles.cancelButton, pressed && styles.pressed)
+              StyleSheet.compose(
+                [styles.cancelButton, { borderColor: themeColors.border }],
+                pressed && styles.pressed,
+              )
             }
           >
-            <MyText style={styles.cancelText}>Cancel</MyText>
+            <MyText
+              style={[styles.cancelText, { color: themeColors.neutrals900 }]}
+            >
+              Cancel
+            </MyText>
           </Pressable>
         </View>
       </View>

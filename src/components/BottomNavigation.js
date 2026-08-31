@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Animated, Pressable, StyleSheet, View } from "react-native";
-import { colors } from "../constants/colors";
 import { screen } from "../constants/spacing";
 import { fontStyles } from "../constants/typography";
+import { useTheme } from "../context/AppConfigContext";
 import Icon from "./Icons";
 import MyText from "./MyText";
 export const BottomTabBar = ({ state, descriptors, navigation }) => {
@@ -42,6 +42,7 @@ export const BottomTabBar = ({ state, descriptors, navigation }) => {
   );
 };
 const BottomNavigationItem = ({ active, item, onPress }) => {
+  const { colors } = useTheme();
   const progress = useRef(new Animated.Value(active ? 1 : 0)).current;
 
   useEffect(() => {
@@ -78,7 +79,10 @@ const BottomNavigationItem = ({ active, item, onPress }) => {
           color={active ? colors.primary500 : colors.neutrals900}
         />
         <MyText
-          style={StyleSheet.compose(styles.label, active && styles.activeLabel)}
+          style={[
+            styles.label,
+            { color: active ? colors.primary500 : colors.neutrals900 },
+          ]}
         >
           {item.name}
         </MyText>
@@ -87,6 +91,7 @@ const BottomNavigationItem = ({ active, item, onPress }) => {
   );
 };
 const BottomNavigation = ({ items, selectedId, onSelect }) => {
+  const { colors } = useTheme();
   const [barWidth, setBarWidth] = useState(0);
   const selectedIndex = Math.max(
     0,
@@ -117,14 +122,25 @@ const BottomNavigation = ({ items, selectedId, onSelect }) => {
 
   return (
     <View
-      style={styles.tabBar}
+      style={[
+        styles.tabBar,
+        {
+          backgroundColor: colors.white,
+          borderTopColor: colors.tabLine,
+        },
+      ]}
       onLayout={event => setBarWidth(event.nativeEvent.layout.width)}
     >
       {tabWidth ? (
         <Animated.View
           style={StyleSheet.compose(styles.activeIndicatorSlot, indicatorStyle)}
         >
-          <View style={styles.activeLine} />
+          <View
+            style={[
+              styles.activeLine,
+              { backgroundColor: colors.primary500 },
+            ]}
+          />
         </Animated.View>
       ) : null}
       {items.map(item => {
@@ -147,8 +163,6 @@ const styles = StyleSheet.create({
   tabBar: {
     height: screen.bottomTabsHeight,
     borderTopWidth: 1,
-    borderTopColor: colors.tabLine,
-    backgroundColor: colors.white,
     flexDirection: "row",
     paddingBottom: 8,
   },
@@ -163,7 +177,6 @@ const styles = StyleSheet.create({
     height: 3,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
-    backgroundColor: colors.primary500,
   },
   tabItem: {
     flex: 1,
@@ -176,10 +189,6 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   label: {
-    color: colors.neutrals900,
     ...fontStyles.xsmRegular,
-  },
-  activeLabel: {
-    color: colors.primary500,
   },
 });

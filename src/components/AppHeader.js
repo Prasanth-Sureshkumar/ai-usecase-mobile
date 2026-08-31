@@ -1,18 +1,17 @@
 import React from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { colors } from "../constants/colors";
-import { fontStyles, weights } from "../constants/typography";
+import { fontStyles } from "../constants/typography";
 import Icon, { IconMap } from "./Icons";
+import { useAppConfig, useTheme } from "../context/AppConfigContext";
 import { useUser } from "../context/UserContext";
 import MyText from "./MyText";
 import { ROUTES } from "../navigation/routes";
 import { getProfileImageUri } from "../utils/profile";
+import { DEFAULT_FULL_LOGO_URL } from "../constants/branding";
 
 const PLACEHOLDER_PROFILE_IMAGE = require("../assets/images/placeholder.png");
 
-export const MAIN_HEADER_LOGO_URL =
-  "https://pub-d423d28126b8427881b12df516c6520a.r2.dev/Frame%2026796%20(1).png";
 export const BackHeader = ({
   title,
   onBack,
@@ -25,18 +24,21 @@ export const BackHeader = ({
   actionInProgress = false,
   testID,
 }) => {
+  const { colors } = useTheme();
   const actionHandler =
     onActionPress || onActionPressRef?.current || onActionPressRef;
 
   return (
     <View
-      style={StyleSheet.compose(
-        StyleSheet.compose(
-          styles.backHeader,
-          arrowOnly && styles.arrowOnlyHeader,
-        ),
+      style={[
+        styles.backHeader,
+        {
+          backgroundColor: colors.white,
+          borderBottomColor: colors.borderLight,
+        },
+        arrowOnly && styles.arrowOnlyHeader,
         style,
-      )}
+      ]}
       testID={testID}
     >
       <Pressable
@@ -54,10 +56,11 @@ export const BackHeader = ({
       {arrowOnly ? null : (
         <MyText
           numberOfLines={1}
-          style={StyleSheet.compose(
+          style={[
             styles.backTitle,
+            { color: colors.neutrals900 },
             !isTitleBold && styles.regularTitle,
-          )}
+          ]}
         >
           {title}
         </MyText>
@@ -73,15 +76,21 @@ export const BackHeader = ({
           )}
           testID={testID ? `${testID}-action` : undefined}
         >
-          <MyText style={styles.actionText}>{actionText}</MyText>
+          <MyText style={[styles.actionText, { color: colors.primary500 }]}>
+            {actionText}
+          </MyText>
         </Pressable>
       ) : null}
     </View>
   );
 };
-export const MainHeader = ({ logoUrl = MAIN_HEADER_LOGO_URL }) => {
+export const MainHeader = ({ logoUrl }) => {
   const navigation = useNavigation();
+  const { organization } = useAppConfig();
+  const { colors } = useTheme();
   const { user } = useUser();
+  const resolvedLogoUrl =
+    organization?.logoUrl || logoUrl || DEFAULT_FULL_LOGO_URL;
   const profileImageUri = getProfileImageUri(user);
   const profileImage = profileImageUri
     ? { uri: profileImageUri }
@@ -96,13 +105,30 @@ export const MainHeader = ({ logoUrl = MAIN_HEADER_LOGO_URL }) => {
   };
 
   return (
-    <View style={styles.mainHeader}>
+    <View
+      style={[
+        styles.mainHeader,
+        {
+          backgroundColor: colors.white,
+          borderBottomColor: colors.borderLight,
+        },
+      ]}
+    >
       <View style={styles.brandRow}>
-        <Image
-          source={{ uri: logoUrl }}
-          resizeMode="contain"
-          style={styles.logoImage}
-        />
+        {resolvedLogoUrl ? (
+          <Image
+            source={{ uri: resolvedLogoUrl }}
+            resizeMode="contain"
+            style={styles.logoImage}
+          />
+        ) : (
+          <MyText
+            style={[styles.logoFallbackText, { color: colors.neutrals900 }]}
+            numberOfLines={1}
+          >
+            {organization?.name || "App"}
+          </MyText>
+        )}
         {/* <Icon name={IconMap.dropDown} color={colors.neutrals900} size={25} /> */}
       </View>
       <Pressable
@@ -129,11 +155,9 @@ const styles = StyleSheet.create({
   backHeader: {
     height: 64,
     borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: colors.white,
   },
   arrowOnlyHeader: {
     borderBottomWidth: 0,
@@ -145,7 +169,6 @@ const styles = StyleSheet.create({
   },
   backTitle: {
     flex: 1,
-    color: colors.neutrals900,
     ...fontStyles.lgBold,
     marginLeft: 8,
   },
@@ -161,18 +184,15 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   actionText: {
-    color: colors.primary500,
     ...fontStyles.smBold,
   },
   mainHeader: {
     height: 74,
     borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 14,
-    backgroundColor: colors.white,
   },
   brandRow: {
     flexDirection: "row",
@@ -181,7 +201,11 @@ const styles = StyleSheet.create({
   },
   logoImage: {
     width: 220,
-    height: 150,
+    height: 54,
+  },
+  logoFallbackText: {
+    maxWidth: 220,
+    ...fontStyles.lgBold,
   },
   profileWrap: {
     width: 44,
@@ -195,22 +219,5 @@ const styles = StyleSheet.create({
     height: 38,
     borderRadius: 19,
     marginTop: 5,
-  },
-  badge: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    minWidth: 18,
-    height: 18,
-    borderRadius: 9,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.red700,
-    paddingHorizontal: 3,
-  },
-  badgeText: {
-    color: colors.white,
-    fontSize: 10,
-    fontWeight: weights.bold,
   },
 });
