@@ -2,7 +2,6 @@ import { apiClient, getApiErrorMessage } from "../api/client";
 import { clearAuthSession } from "../api/tokenStorage";
 import { USER_ENDPOINTS } from "../api/endpoints";
 
-const delay = (ms = 650) => new Promise(resolve => setTimeout(resolve, ms));
 const unwrapResponse = response => {
   const body = response.data || {};
   return {
@@ -60,7 +59,16 @@ export const changePassword = async ({
   }
 };
 export const deactivateAccount = async () => {
-  await delay();
-  await clearAuthSession();
-  return { success: true };
+  try {
+    const response = await apiClient.post(USER_ENDPOINTS.DEACTIVATE);
+    const result = unwrapResponse(response);
+
+    if (result.success) {
+      await clearAuthSession();
+    }
+
+    return result;
+  } catch (error) {
+    return failure(error, "Unable to deactivate account.");
+  }
 };

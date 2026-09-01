@@ -12,6 +12,7 @@ import { useUser } from "../context/UserContext";
 import { useAppConfig, useTheme } from "../context/AppConfigContext";
 import MyText from "../components/MyText";
 import { ROUTES } from "../navigation/routes";
+import ErrorMessage from "../components/ErrorMessage";
 const DeactivateAccountScreen = ({ navigation }) => {
   const { setUser } = useUser();
   const { clearAppConfig, organization } = useAppConfig();
@@ -19,13 +20,23 @@ const DeactivateAccountScreen = ({ navigation }) => {
   const organizationName = organization?.name || "your organization";
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [apiError, setApiError] = useState("");
   const confirmDeactivate = async () => {
+    if (submitting) return;
+
     setSubmitting(true);
-    await deactivateAccount();
-    setUser(null);
-    clearAppConfig();
+    setApiError("");
+    const response = await deactivateAccount();
     setSubmitting(false);
     setConfirmVisible(false);
+
+    if (!response.success) {
+      setApiError(response.message || "Unable to deactivate account.");
+      return;
+    }
+
+    setUser(null);
+    clearAppConfig();
     navigation.reset({
       index: 0,
       routes: [{ name: ROUTES.PRE_LOGIN }],
@@ -57,40 +68,48 @@ const DeactivateAccountScreen = ({ navigation }) => {
           </MyText>
         </View>
 
-        <View style={styles.footer}>
-          <Pressable
-            disabled={submitting}
-            onPress={() => setConfirmVisible(true)}
-            style={({ pressed }) =>
-              StyleSheet.compose(
-                [
-                  styles.continueButton,
-                  { backgroundColor: themeColors.redText },
-                ],
-                pressed && styles.pressed,
-              )
-            }
-          >
-            <MyText style={[styles.continueText, { color: themeColors.white }]}>
-              Continue
-            </MyText>
-          </Pressable>
-          <Pressable
-            disabled={submitting}
-            onPress={() => navigation.goBack()}
-            style={({ pressed }) =>
-              StyleSheet.compose(
-                [styles.cancelButton, { borderColor: themeColors.border }],
-                pressed && styles.pressed,
-              )
-            }
-          >
-            <MyText
-              style={[styles.cancelText, { color: themeColors.neutrals900 }]}
+        <View style={styles.footerContainer}>
+          {apiError ? <ErrorMessage message={apiError} compact /> : null}
+          <View style={styles.footer}>
+            <Pressable
+              disabled={submitting}
+              onPress={() => {
+                setApiError("");
+                setConfirmVisible(true);
+              }}
+              style={({ pressed }) =>
+                StyleSheet.compose(
+                  [
+                    styles.continueButton,
+                    { backgroundColor: themeColors.redText },
+                  ],
+                  pressed && styles.pressed,
+                )
+              }
             >
-              Cancel
-            </MyText>
-          </Pressable>
+              <MyText
+                style={[styles.continueText, { color: themeColors.white }]}
+              >
+                Continue
+              </MyText>
+            </Pressable>
+            <Pressable
+              disabled={submitting}
+              onPress={() => navigation.goBack()}
+              style={({ pressed }) =>
+                StyleSheet.compose(
+                  [styles.cancelButton, { borderColor: themeColors.border }],
+                  pressed && styles.pressed,
+                )
+              }
+            >
+              <MyText
+                style={[styles.cancelText, { color: themeColors.neutrals900 }]}
+              >
+                Cancel
+              </MyText>
+            </Pressable>
+          </View>
         </View>
       </View>
       <ConfirmationDialog
@@ -138,6 +157,9 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: "row",
     gap: 10,
+  },
+  footerContainer: {
+    gap: 12,
   },
   continueButton: {
     flex: 1,
