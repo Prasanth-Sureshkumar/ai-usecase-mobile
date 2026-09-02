@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { Linking, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Icon, { IconMap } from "../components/Icons";
 import MyText from "../components/MyText";
 import { useAppConfig, useTheme } from "../context/AppConfigContext";
 import { fontStyles } from "../constants/typography";
 import { normalizeUrl } from "../utils/url";
+import { ConfirmationDialog } from "../components/SharedUIComponents";
+import ErrorMessage from "../components/ErrorMessage";
+import { leaveOrganization } from "../services/user";
+import { useUser } from "../context/UserContext";
+import { ROUTES } from "../navigation/routes";
 
 const actions = [
   {
@@ -19,9 +24,15 @@ const openWebsite = url => {
   Linking.openURL(normalizeUrl(url)).catch(() => {});
 };
 
-const OrgnizationAbout = () => {
-  const { organization } = useAppConfig();
+const OrgnizationAbout = ({ navigation }) => {
+  const { setUser } = useUser();
+  const { clearAppConfig, organization } = useAppConfig();
   const { colors } = useTheme();
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [apiError, setApiError] = useState("");
+  const organizationName = organization?.name || "this organization";
+  const organizationId = organization?.id;
   const locationText = [
     organization?.location?.address,
     organization?.location?.city,
@@ -54,6 +65,27 @@ const OrgnizationAbout = () => {
       value: locationText,
     },
   ].filter(row => Boolean(row.value));
+  const confirmLeave = async () => {
+    if (submitting || !organizationId) return;
+
+    setSubmitting(true);
+    setApiError("");
+    const response = await leaveOrganization(organizationId);
+    setSubmitting(false);
+    setConfirmVisible(false);
+
+    if (!response.success) {
+      setApiError(response.message || "Unable to leave organization.");
+      return;
+    }
+
+    setUser(null);
+    clearAppConfig();
+    navigation.reset({
+      index: 0,
+      routes: [{ name: ROUTES.PRE_LOGIN }],
+    });
+  };
 
   return (
     <View style={[styles.safe, { backgroundColor: colors.white }]}>
@@ -79,13 +111,32 @@ const OrgnizationAbout = () => {
           <MyText style={[styles.sectionTitle, { color: colors.neutrals900 }]}>
             Actions
           </MyText>
+          {apiError ? <ErrorMessage message={apiError} compact /> : null}
           <View style={styles.rows}>
             {actions.map(action => (
-              <ActionRow key={action.id} action={action} colors={colors} />
+              <ActionRow
+                key={action.id}
+                action={action}
+                colors={colors}
+                disabled={!organizationId || submitting}
+                onPress={() => {
+                  setApiError("");
+                  setConfirmVisible(true);
+                }}
+              />
             ))}
           </View>
         </View>
       </ScrollView>
+      <ConfirmationDialog
+        visible={confirmVisible}
+        title="Leave organization?"
+        message={`Do you really want to leave ${organizationName}? You will lose access to this organization's app content.`}
+        confirmLabel="Yes, Leave"
+        loading={submitting}
+        onCancel={() => setConfirmVisible(false)}
+        onConfirm={confirmLeave}
+      />
     </View>
   );
 };
@@ -113,13 +164,18 @@ const ContactRow = ({ item, colors }) => {
   );
 };
 
-const ActionRow = ({ action, colors }) => {
+const ActionRow = ({ action, colors, disabled, onPress }) => {
   const color = action.destructive ? colors.red500 : colors.neutrals900;
 
   return (
     <Pressable
+      disabled={disabled}
+      onPress={onPress}
       style={({ pressed }) =>
-        StyleSheet.compose(styles.row, pressed && styles.pressed)
+        StyleSheet.compose(
+          styles.row,
+          (pressed || disabled) && styles.pressed,
+        )
       }
     >
       <Icon name={IconMap.doorExit} size={20} color={color} />

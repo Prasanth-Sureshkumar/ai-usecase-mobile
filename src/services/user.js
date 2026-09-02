@@ -72,3 +72,20 @@ export const deactivateAccount = async () => {
     return failure(error, "Unable to deactivate account.");
   }
 };
+
+export const leaveOrganization = async organizationId => {
+  try {
+    const response = await apiClient.post(USER_ENDPOINTS.LEAVE_ORGANIZATION, {
+      organizationId,
+    });
+    const result = unwrapResponse(response);
+
+    if (result.success) {
+      await clearAuthSession();
+    }
+
+    return result;
+  } catch (error) {
+    return failure(error, "Unable to leave organization.");
+  }
+};

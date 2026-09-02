@@ -19,6 +19,7 @@ export const USER_ENDPOINTS = {
   PROFILE_ME: `${USER_BASE}/me`,
   CHANGE_PASSWORD: `${USER_BASE}/change-password`,
   DEACTIVATE: `${USER_BASE}/deactivate`,
+  LEAVE_ORGANIZATION: `${USER_BASE}/leave-organization`,
 };
 
 export const FILE_UPLOAD_ENDPOINTS = {
