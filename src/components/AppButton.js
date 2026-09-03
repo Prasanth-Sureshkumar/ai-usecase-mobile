@@ -5,6 +5,7 @@ import { screen } from "../constants/spacing";
 import { weights } from "../constants/typography";
 import Icon, { IconMap } from "./Icons";
 import MyText from "./MyText";
+import { useTheme } from "../context/AppConfigContext";
 
 const composeButtonStyle = ({ pressed, disabled, loading, style }) =>
   StyleSheet.compose(
@@ -15,7 +16,9 @@ const composeButtonStyle = ({ pressed, disabled, loading, style }) =>
       ),
       pressed && !disabled && !loading && styles.pressed,
     ),
-    style,
+    StyleSheet.compose(
+      style,
+      { backgroundColor: useTheme().colors.primary500 })
   );
 
 const AppButton = ({

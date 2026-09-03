@@ -115,7 +115,7 @@ const DeactivateAccountScreen = ({ navigation }) => {
       <ConfirmationDialog
         visible={confirmVisible}
         title="Are you sure?"
-        message="Do you really want to deactivate your account? You will lose access to Regent AI."
+        message="Do you really want to deactivate your account? You will lose access to Ark AI."
         confirmLabel="Yes, Deactivate"
         loading={submitting}
         onCancel={() => setConfirmVisible(false)}

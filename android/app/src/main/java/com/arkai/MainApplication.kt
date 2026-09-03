@@ -1,4 +1,4 @@
-package com.schoolportalmobilecli
+package com.arkai
 
 import android.app.Application
 import com.facebook.react.PackageList

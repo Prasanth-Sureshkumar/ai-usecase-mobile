@@ -17,7 +17,7 @@ const RegistrationSuccessScreen = ({ navigation }) => {
     <View style={styles.container}>
       <SuccessState
         title={"Account Created\nSuccessfully!"}
-        message={"Your account has been created\nsuccessfully."}
+        message={"Your account has been created\nsuccessfully for Ark Ai."}
       />
     </View>
   );

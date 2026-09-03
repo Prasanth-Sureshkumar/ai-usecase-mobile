@@ -12,6 +12,7 @@ import { colors } from "../constants/colors";
 import { fontStyles, weights } from "../constants/typography";
 import Icon, { IconMap } from "./Icons";
 import MyText from "./MyText";
+import { useTheme } from "../context/AppConfigContext";
 
 const composeActionRowStyle = ({ pressed, onPress, withDivider }) =>
   StyleSheet.compose(
@@ -49,6 +50,7 @@ export const Avatar = ({
   style,
 }) => {
   const imageSource = source || (uri ? { uri } : null);
+  const { colors: themedColors } = useTheme();
 
   return (
     <Pressable
@@ -67,7 +69,7 @@ export const Avatar = ({
         />
       ) : null}
       {editable ? (
-        <View style={styles.avatarEdit}>
+        <View style={[styles.avatarEdit, { backgroundColor: themedColors.primary500 }]}>
           <Icon name={IconMap.pencil} color={colors.white} size={14} />
         </View>
       ) : null}
@@ -97,8 +99,10 @@ export const GlyphBadge = ({
   );
 };
 export const RoundChevron = ({}) => {
+
+  const { colors: themedColors } = useTheme();
   return (
-    <View style={styles.chevronCircle}>
+    <View style={[styles.chevronCircle, {backgroundColor: themedColors.primary500}]}>
       <Icon name={IconMap.rightOpen} color={colors.white} size={10} />
     </View>
   );

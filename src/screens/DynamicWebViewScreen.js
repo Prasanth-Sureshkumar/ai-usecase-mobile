@@ -15,7 +15,7 @@ import { getAuthToken } from "../api/tokenStorage";
 
 const WEB_APP_TOKEN_KEY = "app-x-token";
 const WEBVIEW_MESSAGE_TYPES = {
-  DOWNLOAD_DOCUMENT: "REGENT_DOWNLOAD_DOCUMENT",
+  DOWNLOAD_DOCUMENT: "ARK_AI_DOWNLOAD_DOCUMENT",
 };
 
 const createWebAppTokenScript = token => `

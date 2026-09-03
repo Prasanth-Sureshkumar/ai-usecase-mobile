@@ -72,9 +72,8 @@ const PostAuthSplashScreen = ({ navigation }) => {
     >
       {initialized ? (
         <AppLogo
-          size={112}
+          size={180}
           variant="crest"
-          showName
           logoUrl={organization?.miniUrl || DEFAULT_MINI_LOGO_URL}
         />
       ) : (

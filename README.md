@@ -1,4 +1,4 @@
-# Regent AI Mobile
+# Ark AI Mobile
 
 React Native CLI prototype built in JavaScript from the supplied Figma/reference screenshots. This is intentionally not an Expo app.
 
@@ -6,13 +6,13 @@ React Native CLI prototype built in JavaScript from the supplied Figma/reference
 
 ```sh
 cd /Users/prasanth/Development
-npx @react-native-community/cli init RegentAIMobile --version 0.80.3
+npx @react-native-community/cli init ArkAIMobile --version 0.80.3
 ```
 
 This repository folder is already created as:
 
 ```sh
-cd /Users/prasanth/Development/regent-ai-mobile
+cd /Users/prasanth/Development/ark-ai-mobile
 ```
 
 ## Dependency Installation Commands
@@ -50,9 +50,9 @@ The mock auth behavior lives in `src/services/authService.js`.
 
 Use these emails in the app:
 
-- `regentsschool@gmail.com`: existing user, opens Login
-- `newuser@regents.school`: new user, opens Registration
-- `error@regents.school`: backend-style error
+- `existing@arkai.example`: existing user, opens Login
+- `newuser@arkai.example`: new user, opens Registration
+- `error@arkai.example`: backend-style error
 - Any other valid email: invitation-not-found error screen treatment
 
 For the registration mock OTP, use:
@@ -65,11 +65,10 @@ For the registration mock OTP, use:
 
 Place supplied visual assets here when available:
 
-- App logo placeholder replacement: `src/assets/images/app-logo.png`
-- Regents School crest: `src/assets/images/regents-crest.png`
+- Ark AI logo: `src/assets/images/ark-ai-logo.png`
 - Any custom icons: `src/assets/icons/`
 
-The current implementation uses React Native views/text for the placeholder logo and crest so the app runs even before image assets are supplied.
+The current implementation uses the bundled Ark AI logo asset for unauthenticated and initial splash branding.
 
 ## Run
 
