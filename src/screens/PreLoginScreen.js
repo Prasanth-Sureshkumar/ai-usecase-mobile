@@ -63,7 +63,7 @@ const PreLoginScreen = ({ navigation, route }) => {
     >
       <AppLogo size={showHeader ? 110 : 112} style={styles.logo} />
       <View style={styles.copyBlock}>
-        <MyText style={styles.title}>Welcome</MyText>
+        <MyText style={styles.title}>Welcome to{"\n"}App Name</MyText>
         <MyText style={styles.subtitle}>
           Enter your email and access code to continue
         </MyText>

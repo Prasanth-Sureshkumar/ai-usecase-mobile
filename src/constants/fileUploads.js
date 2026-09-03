@@ -3,4 +3,4 @@ export const FILE_RELATED_TYPES = {
   ORGANIZATION_PROFILE: "organization",
 };
 
-export const PROFILE_IMAGE_MAX_BYTES = 10 * 1024 * 1024;
+export const PROFILE_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
